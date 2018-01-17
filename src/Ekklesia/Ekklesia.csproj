@@ -1,0 +1,86 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="2.0.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.0.0-alpha2-final"/>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0"/>
+    <PackageReference Include="Autofac" Version="4.6.2"/>
+    <PackageReference Include="Taglib-Sharp-NetStandard" Version="1.0.0"/>
+    <PackageReference Include="Serilog.AspNetCore" Version="2.1.0"/>
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1"/>
+    <PackageReference Include="vtortola.WebSocketListener" Version="3.0.0"/>
+    <PackageReference Include="ServiceStack.Text" Version="5.0.2"/>
+    <PackageReference Include="Serenity.FluentMigrator.Runner" Version="1.6.904"/>
+    <PackageReference Include="Serenity.FluentMigrator" Version="1.6.904"/>
+    <PackageReference Include="ServiceStack.Logging.Serilog" Version="5.0.2"/>
+    <PackageReference Include="System.IO.Abstractions" Version="2.1.0.178"/>
+    <PackageReference Include="AutofacSerilogIntegration" Version="2.0.0"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="yarn.lock"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\"/>
+  </ItemGroup>
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="ServiceStack">
+      <HintPath>..\..\lib\ServiceStack\ServiceStack.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Client">
+      <HintPath>..\..\lib\ServiceStack\ServiceStack.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Common">
+      <HintPath>..\..\lib\ServiceStack\ServiceStack.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces">
+      <HintPath>..\..\lib\ServiceStack\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Mvc">
+      <HintPath>..\..\lib\ServiceStack\ServiceStack.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite">
+      <HintPath>..\..\lib\ServiceStack\ServiceStack.OrmLite.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite.MySql">
+      <HintPath>..\..\lib\ServiceStack\ServiceStack.OrmLite.MySql.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite.PostgreSQL">
+      <HintPath>..\..\lib\ServiceStack\ServiceStack.OrmLite.PostgreSQL.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite.Sqlite">
+      <HintPath>..\..\lib\ServiceStack\ServiceStack.OrmLite.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite.SqlServer">
+      <HintPath>..\..\lib\ServiceStack\ServiceStack.OrmLite.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Redis">
+      <HintPath>..\..\lib\ServiceStack\ServiceStack.Redis.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Server">
+      <HintPath>..\..\lib\ServiceStack\ServiceStack.Server.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\..\lib\ServiceStack\ServiceStack.Text.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+    <Exec Command="npm install"/>
+    <Exec Command="au build --env prod"/>
+    <ItemGroup>
+      <DistFiles Include="wwwroot\dist\**"/>
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>%(DistFiles.Identity)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+</Project>
