@@ -8,9 +8,13 @@ using Ekklesia.Audio;
 using Ekklesia.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ServiceStack;
 
 namespace Ekklesia
 {
@@ -39,8 +43,10 @@ namespace Ekklesia
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILifetimeScope lifetimeScope)
         {
+            LicenseUtils.RegisterLicense(Configuration["servicestack:license"]);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -56,6 +62,10 @@ namespace Ekklesia
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseForwardedHeaders(new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                });
             }
 
             app.UseStaticFiles();
@@ -64,6 +74,8 @@ namespace Ekklesia
             {
                 routes.MapHub<SongHub>("song");
             });
+
+            app.UseServiceStack(lifetimeScope.Resolve<AppHostBase>());
 
             app.UseMvc(routes =>
             {
@@ -77,7 +89,7 @@ namespace Ekklesia
             });
 
             CancellationTokenSource cancellation = new CancellationTokenSource();
-            new Webcaster().Start(8003, cancellation.Token);
+            lifetimeScope.Resolve<IWebcaster>().Start(8003, cancellation.Token);
         }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using ServiceStack;
 using ServiceStack.Caching;
 using ServiceStack.Configuration;
+using ServiceStack.Data;
 using ServiceStack.OrmLite;
 
 namespace Ekklesia
@@ -37,19 +38,15 @@ namespace Ekklesia
             builder.RegisterType<MemoryCacheClient>().As<ICacheClient>().SingleInstance();
 
 
-            // builder.Register(context =>
-            //                  {
-            //                      IOrmLiteDialectProvider dialectProvider = GetDialectProvider(_configuration["DbType"]);
-            //                      OrmLiteConnectionFactory connectionFactory = new OrmLiteConnectionFactory(
-            //                          _configuration.GetConnectionString("DefaultConnection"),
-            //                          dialectProvider);
-            //                      connectionFactory.RegisterConnection(
-            //                          "Users", _configuration.GetConnectionString("UsersConnection") ?? _configuration.GetConnectionString("DefaultConnection"),
-            //                          dialectProvider);
-            //                      return connectionFactory;
-            //                  })
-            //        .As<IDbConnectionFactory>()
-            //        .SingleInstance();
+            builder.Register(context =>
+                             {
+                                 OrmLiteConnectionFactory connectionFactory = new OrmLiteConnectionFactory(
+                                     _configuration.GetConnectionString("DefaultConnection"),
+                                     SqliteDialect.Provider);
+                                 return connectionFactory;
+                             })
+                   .As<IDbConnectionFactory>()
+                   .SingleInstance();
 
             builder.RegisterLogger();
 

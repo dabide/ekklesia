@@ -5,6 +5,7 @@ using FluentMigrator.Runner.Initialization;
 using FluentMigrator.Runner.Processors;
 using FluentMigrator.Runner.Processors.MySql;
 using FluentMigrator.Runner.Processors.Postgres;
+using FluentMigrator.Runner.Processors.SQLite;
 using FluentMigrator.Runner.Processors.SqlServer;
 using Microsoft.Extensions.Configuration;
 using ServiceStack;
@@ -15,18 +16,16 @@ namespace Ekklesia.Tools
     public class DbMigrator : IDbMigrator
     {
         private readonly IConfiguration _configuration;
-        private readonly ILogFactory _logFactory;
 
-        public DbMigrator(ILogFactory logFactory, IConfiguration configuration)
+        public DbMigrator(IConfiguration configuration)
         {
-            _logFactory = logFactory;
             _configuration = configuration;
         }
 
         public void Migrate()
         {
-            IAnnouncer announcer = new ServiceStackLoggingAnnouncer(_logFactory) {ShowSql = true};
-            IMigrationProcessorFactory migrationProcessorFactory = GetMigrationProcessorFactory(_configuration["DbType"]);
+            IAnnouncer announcer = new MigrationAnnouncer() {ShowSql = true};
+            IMigrationProcessorFactory migrationProcessorFactory = new SQLiteProcessorFactory();
 
             ProcessorOptions options = new ProcessorOptions
                                        {
@@ -38,24 +37,8 @@ namespace Ekklesia.Tools
                 migrationProcessorFactory.Create(_configuration.GetConnectionString("DefaultConnection"), announcer,
                                                  options))
             {
-                MigrationRunner runner = new MigrationRunner(GetType().GetAssembly(), new RunnerContext(announcer), processor);
+                MigrationRunner runner = new MigrationRunner(GetType().Assembly, new RunnerContext(announcer), processor);
                 runner.MigrateUp();
-            }
-        }
-
-        private static IMigrationProcessorFactory GetMigrationProcessorFactory(string dbType)
-        {
-            switch (dbType)
-            {
-                case "SQLServer":
-                    return new SqlServer2014ProcessorFactory();
-                case "MySQL":
-                    return new MySqlProcessorFactory();
-                case "PostgreSQL":
-                    return new PostgresProcessorFactory();
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(dbType),
-                                                          "The database type is not supported");
             }
         }
     }

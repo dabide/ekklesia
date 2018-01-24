@@ -6,8 +6,8 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0"/>
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="2.0.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5"/>
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="2.0.2"/>
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.0.0-alpha2-final"/>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0"/>
     <PackageReference Include="Autofac" Version="4.6.2"/>
@@ -15,7 +15,6 @@
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.0"/>
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1"/>
     <PackageReference Include="vtortola.WebSocketListener" Version="3.0.0"/>
-    <PackageReference Include="ServiceStack.Text" Version="5.0.2"/>
     <PackageReference Include="Serenity.FluentMigrator.Runner" Version="1.6.904"/>
     <PackageReference Include="Serenity.FluentMigrator" Version="1.6.904"/>
     <PackageReference Include="ServiceStack.Logging.Serilog" Version="5.0.2"/>

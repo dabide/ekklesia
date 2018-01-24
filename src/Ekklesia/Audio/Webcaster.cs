@@ -44,7 +44,9 @@ namespace Ekklesia.Audio
                 {
                     var webSocketConnection = await server.AcceptWebSocketAsync(token).ConfigureAwait(false);
                     if (webSocketConnection != null)
-                        Task.Run(() => HandleConnectionAsync(webSocketConnection, token));
+                    {
+                        Task _ = Task.Run(() => HandleConnectionAsync(webSocketConnection, token));
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -114,12 +116,8 @@ namespace Ekklesia.Audio
                             if (helloMessage != null)
                             {
                                 var bytes = message.ReadFully();
-                                Task.Run(() =>
-                                {
-                                    outStream.Write(bytes, 0, bytes.Length);
-                                    icecastStream.Write(bytes, 0, bytes.Length);
-                                });
-
+                                outStream.Write(bytes, 0, bytes.Length);
+                                icecastStream.Write(bytes, 0, bytes.Length);
                             }
 
                             break;

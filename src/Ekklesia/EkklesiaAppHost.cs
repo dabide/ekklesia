@@ -27,7 +27,7 @@ namespace Ekklesia
         private readonly ServerEventsFeature _serverEventsFeature;
         public static IEkklesiaConfiguration Configuration { get; private set; }
 
-        public EkklesiaAppHost(AutofacIocAdapter autofacIocAdapter, IHostingEnvironment hostingEnvironment, IConfiguration configuration, ServerEventsFeature serverEventsFeature) : base("SoundWords", typeof(SoundWordsAppHost).GetAssembly())
+        public EkklesiaAppHost(AutofacIocAdapter autofacIocAdapter, IHostingEnvironment hostingEnvironment, IConfiguration configuration, ServerEventsFeature serverEventsFeature) : base("SoundWords", typeof(EkklesiaAppHost).Assembly)
         {
             _autofacIocAdapter = autofacIocAdapter;
             _hostingEnvironment = hostingEnvironment;
