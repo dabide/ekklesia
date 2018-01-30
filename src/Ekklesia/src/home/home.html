@@ -1,0 +1,5 @@
+<template>
+  <div class="nav flex-column nav-pills">
+    <a repeat.for="row of router.navigation" class="nav-link ${row.isActive ? 'active' : ''}" href.bind="row.href">${row.title}</a>
+  </div>
+</template>

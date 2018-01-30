@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
 
@@ -41,6 +42,7 @@ namespace Ekklesia
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(config => config.AddJsonFile("appsettings.local.json", true))
                 .ConfigureServices(services => services.AddAutofac())
                 .UseStartup<Startup>()
                 .UseSerilog()

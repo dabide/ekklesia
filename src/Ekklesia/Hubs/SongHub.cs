@@ -1,18 +1,33 @@
 using System.Threading.Tasks;
+using Ekklesia.Songs;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Ekklesia.Hubs
 {
     internal class SongHub : Hub
     {
-        public async Task Send(ToSend toSend)
+        public async Task ChangeSongPart(ChangeSongPartMessage message)
         {
-            await Clients.All.InvokeAsync("Send", toSend.Message);
+            await Clients.All.InvokeAsync("Send", message);
         }
     }
 
-    public class ToSend
+    internal class ChangeSongPartMessage : MessageBase
     {
-        public string Message { get; set; }
+        protected ChangeSongPartMessage() : base("song:change_part")
+        {
+        }
+
+        public SongPart SongPart { get; set; }
+    }
+
+    internal class MessageBase
+    {
+        protected MessageBase(string messageType)
+        {
+            Type = messageType;
+        }
+
+        public string Type { get; set; }
     }
 }

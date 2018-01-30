@@ -1,0 +1,7 @@
+<template>
+  <require from="./song-part"></require>
+  <song-part lines.bind="songPart.lines"></song-part>
+  <div if.bind="notFullscreen" style="position: absolute; top: 5px; right: 5px;">
+    <button class="btn btn-default" click.trigger="fullScreen()">Full screen</button>
+  </div>
+</template>

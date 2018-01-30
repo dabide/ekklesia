@@ -27,8 +27,9 @@ export class SignalRService {
   }
 
   private registerOnServerEvents(): void {
-    this.hubConnection.on('send', (data: any) => {
-      logger.debug('NewSong', data);
+    this.hubConnection.on('send', (message: any) => {
+      logger.debug('Message received', message);
+      this.eventAggregator.publish(message.type, message);
     });
   }
 }

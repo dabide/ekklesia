@@ -1,0 +1,18 @@
+<template>
+  <h1>${message}</h1>
+  <form>
+    <div class="form-group">
+      <label for="song-name">Song name</label>
+      <input typeahead type="text" class="form-control" id="song-name">
+      <!-- <auto-complete id="song-name" resource="song" attribute.bind="songAttributes" result.two-way="currentSong" label.bind="songLabel" endpoint.bind="api"></auto-complete> -->
+    </div>
+
+  </form>
+
+  <div repeat.for="identifier of currentSong.presentation">
+    ${identifier}
+    <div repeat.for="line of currentSong.lyrics[identifier].lines">
+      <a href="#" click.delegate="display(currentSong.lyrics[identifier])">${line}</a>
+    </div>
+  </div>
+</template>
