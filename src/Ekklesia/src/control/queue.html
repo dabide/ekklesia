@@ -1,0 +1,13 @@
+<template>
+  <div class="list-group">
+    <a repeat.for="item of items" href="javascript:void(0)" keydown.delegate="select($event, $index)" click.delegate="select(item)"
+      class="list-group-item list-group-item-action flex-column align-items-start ${item.id == $parent.currentItem.id ? 'active' : ''}">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">${item.title}</h5>
+      </div>
+      <p class="mb-1">
+        ${item.author}
+      </p>
+    </a>
+  </div>
+</template>
