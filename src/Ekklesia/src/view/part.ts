@@ -1,3 +1,4 @@
+import { activationStrategy } from 'aurelia-router';
 import { SongPart } from './song-part';
 import { SongContext } from './song-context';
 import { autoinject, LogManager, Container } from 'aurelia-framework';
@@ -12,6 +13,10 @@ export class Part {
     logger.debug('constructor');
   }
 
+  determineActivationStrategy() {
+    return activationStrategy.replace;
+  }
+  
   activate(params: any) {
     if (this.songContext.song !== undefined) {
       this.songPart = this.songContext.song.lyrics[params.part];
