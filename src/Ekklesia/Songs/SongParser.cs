@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -9,7 +10,7 @@ namespace Ekklesia.Songs
 {
     internal class SongParser : ISongParser
     {
-        public Song Parse(string xml)
+        public Song Parse(string xml, string id)
         {
             try
             {
@@ -22,7 +23,7 @@ namespace Ekklesia.Songs
 
                 Song song = new Song
                 {
-                    Id = Guid.NewGuid(),
+                    Id = id,
                     Title = songElement.Element("title")?.Value,
                     Author = songElement.Element("author")?.Value,
                     Copyright = songElement.Element("copyright")?.Value,

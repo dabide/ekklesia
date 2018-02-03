@@ -2,6 +2,6 @@
 {
     internal interface ISongParser
     {
-        Song Parse(string xml);
+        Song Parse(string xml, string id);
     }
 }

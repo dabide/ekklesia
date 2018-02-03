@@ -3,11 +3,16 @@
   <form>
     <autocomplete data.call="getSongs(filter, limit)" value.bind="songName" placeholder="Select a song"></autocomplete>
   </form>
-
-  <div repeat.for="identifier of currentSong.presentation">
-    ${identifier}
-    <div repeat.for="line of currentSong.lyrics[identifier].lines">
-      <a href="#" click.delegate="display(currentSong.lyrics[identifier])">${line}</a>
-    </div>
+  <div class="list-group">
+    <a repeat.for="identifier of currentSong.presentation" href="javascript:void(0)" keydown.delegate="navigate($event, $index)" click.delegate="display(currentSong.lyrics[identifier])" class="list-group-item list-group-item-action flex-column align-items-start ${currentSong.lyrics[identifier].active ? 'active' : ''}">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">${identifier}</h5>
+      </div>
+      <p class="mb-1">
+        <span repeat.for="line of currentSong.lyrics[identifier].lines">${line}
+          <br if.bind="!$last">
+        </span>
+      </p>
+    </a>
   </div>
 </template>

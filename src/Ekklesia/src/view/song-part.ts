@@ -20,7 +20,7 @@ export class SongPart {
     this.container = container;
     this.viewFactory = viewCompiler.compile(
       '<template>'
-      + '  <div ref="lineContainer" class="line-container">'
+      + '  <div ref="lineContainer" class="au-animate line-container">'
       + '    <span repeat.for="line of lines">${line}<br if.bind="!$last"></span>'
       + '  </div>'
       + '</template>', viewResources);
@@ -28,15 +28,16 @@ export class SongPart {
 
   linesChanged(newValue: any) {
     logger.debug('linesChanged', newValue);
+    this.viewSlot.removeAll();
+
     let view: View = this.viewFactory.create(this.container);
     view.bind(this);
     
-    this.viewSlot.removeAll();
     this.viewSlot.add(view);
     this.viewSlot.attached();
 
-    this.taskQueue.queueMicroTask(() => {
-      textFit(this.lineContainer, { alignHoriz: true, alignVert: true });
+    this.taskQueue.queueTask(() => {
+      //textFit(this.lineContainer, { alignHoriz: true, alignVert: true });
     });
   }
 }

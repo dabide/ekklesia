@@ -28,7 +28,7 @@ namespace Ekklesia.Services
         {
             string fileName = _fileSystem.Path.Combine(_ekklesiaConfiguration.SongsFolder, request.Name);
             string songXml = _fileSystem.File.ReadAllText(fileName);
-            Song song = _songParser.Parse(songXml);
+            Song song = _songParser.Parse(songXml, request.Name);
             return new SongResponse {Song = song};
         }
 

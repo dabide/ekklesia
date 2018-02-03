@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Ekklesia.Songs;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Ekklesia.Hubs
@@ -18,7 +17,8 @@ namespace Ekklesia.Hubs
         {
         }
 
-        public SongPart SongPart { get; set; }
+        public string Id { get; set; }
+        public string PartIdentifier { get; set; }
     }
 
     internal class MessageBase

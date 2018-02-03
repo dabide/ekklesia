@@ -16,8 +16,9 @@ export function configure(aurelia: Aurelia) {
   aurelia.use
     .standardConfiguration()
     .feature(PLATFORM.moduleName('resources/index'))
+    .plugin(PLATFORM.moduleName('aurelia-animator-css'))
     .plugin(PLATFORM.moduleName('aurelia-api'), config => {
-      config.registerEndpoint('api', '/api');
+      config.registerEndpoint('api', 'api/');
     })
     .plugin(PLATFORM.moduleName('aurelia-bootstrap'), config => config.options.version = 4)
     .globalResources([

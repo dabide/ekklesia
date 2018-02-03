@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "@aspnet/signalr-client": "^1.0.0-alpha2-final",
-    "aurelia-animator-css": "^1.0.2",
+    "aurelia-animator-css": "^1.0.4",
     "aurelia-api": "^3.1.1",
     "aurelia-bootstrap": "https://github.com/cluka/aurelia-bootstrap",
     "aurelia-bootstrapper": "^2.1.1",

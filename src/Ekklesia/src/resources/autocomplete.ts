@@ -40,7 +40,7 @@ export class AutocompleteCustomElement {
 
   searchTextChanged(newValue) {
     if (this.settingValue) return;
-    
+
     if (this.data instanceof Function) {
       logger.debug('data is a function');
 
@@ -70,12 +70,13 @@ export class AutocompleteCustomElement {
 
   handleData(result) {
     let newItems = [];
+    let regex = new RegExp(`(${this.searchText})`, "gi");
     for (let item of result) {
       logger.debug('item', item);
       if (typeof item === 'string') {
-        newItems.push({ name: this.getDisplayName(item), value: item });
+        newItems.push({ name: this.emphasize(regex, item), value: item });
       } else {
-        newItems.push({ name: this.getDisplayName(item.name), value: item });
+        newItems.push({ name: this.emphasize(regex, item.name), value: item });
       }
     }
 
@@ -86,8 +87,8 @@ export class AutocompleteCustomElement {
 
   }
 
-  getDisplayName(name: string) {
-    return name.replace(new RegExp(`(${this.searchText})`, "gi"), "<b>$1</b>");
+  emphasize(regex: RegExp, name: string) {
+    return name.replace(regex, "<b>$1</b>");
   }
 
   lookup(event: any) {
