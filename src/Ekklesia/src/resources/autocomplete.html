@@ -1,0 +1,8 @@
+<template>
+  <div class="dropdown" ref="dropdownElement">
+    <input type="search" class="form-control dropdown-toggle" value.bind="searchText & debounce" data-toggle="dropdown" ref="toggleElement" aria-haspopup="true" aria-expanded="false" placeholder.bind="placeholder">
+    <div class="dropdown-menu">
+      <button repeat.for="item of items" class="dropdown-item" click.trigger="setValue(item)" innerhtml.bind="item.name | sanitizeHTML"></button>
+    </div>
+  </div>
+</template>

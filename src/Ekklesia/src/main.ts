@@ -6,7 +6,8 @@ import {PLATFORM} from 'aurelia-pal';
 import * as Bluebird from 'bluebird';
 import 'bootstrap';
 import 'whatwg-fetch';
-import 'corejs-typeahead';
+import 'tether';
+import 'velocity-animate';
 
 // remove out if you don't want a Promise polyfill (remove also from webpack.config.js)
 Bluebird.config({ warnings: { wForgottenReturn: false } });
@@ -18,6 +19,7 @@ export function configure(aurelia: Aurelia) {
     .plugin(PLATFORM.moduleName('aurelia-api'), config => {
       config.registerEndpoint('api', '/api');
     })
+    .plugin(PLATFORM.moduleName('aurelia-bootstrap'), config => config.options.version = 4)
     .globalResources([
     ]);
 

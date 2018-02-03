@@ -1,12 +1,7 @@
 <template>
   <h1>${message}</h1>
   <form>
-    <div class="form-group">
-      <label for="song-name">Song name</label>
-      <input typeahead type="text" class="form-control" id="song-name">
-      <!-- <auto-complete id="song-name" resource="song" attribute.bind="songAttributes" result.two-way="currentSong" label.bind="songLabel" endpoint.bind="api"></auto-complete> -->
-    </div>
-
+    <autocomplete data.call="getSongs(filter, limit)" value.bind="songName" placeholder="Select a song"></autocomplete>
   </form>
 
   <div repeat.for="identifier of currentSong.presentation">

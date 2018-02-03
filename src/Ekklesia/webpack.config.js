@@ -30,7 +30,7 @@ module.exports = ({production, server, extractCss, coverage} = {}) => ({
   },
   entry: {
     app: ['aurelia-bootstrapper'],
-    vendor: ['bluebird','corejs-typeahead'],
+    vendor: ['bluebird'],
   },
   output: {
     path: outDir,

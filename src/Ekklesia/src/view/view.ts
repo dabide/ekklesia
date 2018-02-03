@@ -1,4 +1,4 @@
-import { autoinject, LogManager, TaskQueue } from 'aurelia-framework';
+import { autoinject, LogManager } from 'aurelia-framework';
 import { EventAggregator } from 'aurelia-event-aggregator';
 import screenfull from 'screenfull';
 import './view.scss';
@@ -8,14 +8,12 @@ const logger = LogManager.getLogger('view');
 @autoinject()
 export class View {
   notFullscreen: boolean = true;
-  taskQueue: TaskQueue;
   songPart: any;
   private _subscriptions = [];
   eventAggregator: EventAggregator;
   
-  constructor(eventAggregator: EventAggregator, taskQueue: TaskQueue) {
+  constructor(eventAggregator: EventAggregator) {
     this.eventAggregator = eventAggregator;
-    this.taskQueue = taskQueue;
 
     this._subscriptions.push(eventAggregator.subscribe('song:change_part', message => {
       logger.debug('Changing song part', message);

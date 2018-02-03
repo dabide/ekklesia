@@ -1,4 +1,4 @@
-import { bindable, autoinject, TaskQueue, LogManager, noView, ViewFactory, ViewCompiler, ViewSlot, Container, ViewResources } from 'aurelia-framework';
+import { bindable, autoinject, TaskQueue, LogManager, noView, View, ViewFactory, ViewCompiler, ViewSlot, Container, ViewResources } from 'aurelia-framework';
 import textFit from 'textfit';
 import './song-part.scss'
 
@@ -28,8 +28,9 @@ export class SongPart {
 
   linesChanged(newValue: any) {
     logger.debug('linesChanged', newValue);
-    let view = this.viewFactory.create(this.container);
+    let view: View = this.viewFactory.create(this.container);
     view.bind(this);
+    
     this.viewSlot.removeAll();
     this.viewSlot.add(view);
     this.viewSlot.attached();
