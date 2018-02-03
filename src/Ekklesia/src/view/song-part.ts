@@ -1,4 +1,3 @@
-import { HelloMultiline } from './../../../../lib/src/ServiceStack/tests/CheckMvc/TypeScript.dtos';
 import { bindable, autoinject, LogManager, TaskQueue, Animator } from 'aurelia-framework';
 import textFit from 'textfit';
 import './song-part.scss'
