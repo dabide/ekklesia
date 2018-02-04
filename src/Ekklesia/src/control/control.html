@@ -1,21 +1,27 @@
 <template>
   <require from="./queue"></require>
-
-  <h1>${message}</h1>
-  <form>
-    <autocomplete data.call="getSongs(filter, limit)" value.bind="songName" placeholder="Select a song"></autocomplete>
-  </form>
-  <queue></queue>
-  <div class="list-group">
-    <a repeat.for="identifier of currentSong.presentation" href="javascript:void(0)" keydown.delegate="navigate($event, $index)" click.delegate="display(currentSong.lyrics[identifier])" class="list-group-item list-group-item-action flex-column align-items-start ${currentSong.lyrics[identifier].active ? 'active' : ''}">
-      <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">${identifier}</h5>
+  <div class="row">
+    <div class="col-4">
+      <form>
+        <autocomplete data.call="getSongs(filter, limit)" value.two-way="songName" placeholder="Select a song" focus.bind="autocompleteHasFocus"></autocomplete>
+      </form>
+      <queue></queue>
+    </div>
+    <div class="col-8">
+      <h1>${message}</h1>
+      <div class="list-group">
+        <a repeat.for="identifier of currentSong.presentation" href="javascript:void(0)" keydown.delegate="navigate($event, $index)"
+          click.delegate="display(currentSong.lyrics[identifier])" class="list-group-item list-group-item-action flex-column align-items-start ${currentSong.lyrics[identifier].active ? 'active' : ''}">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">${identifier}</h5>
+          </div>
+          <p class="mb-1">
+            <span repeat.for="line of currentSong.lyrics[identifier].lines">${line}
+              <br if.bind="!$last">
+            </span>
+          </p>
+        </a>
       </div>
-      <p class="mb-1">
-        <span repeat.for="line of currentSong.lyrics[identifier].lines">${line}
-          <br if.bind="!$last">
-        </span>
-      </p>
-    </a>
+    </div>
   </div>
 </template>

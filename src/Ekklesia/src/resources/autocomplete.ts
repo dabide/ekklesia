@@ -1,15 +1,17 @@
-import { autoinject, LogManager, bindable, bindingMode, observable, TaskQueue } from 'aurelia-framework';
+import { inject, LogManager, bindable, bindingMode, observable, TaskQueue, Optional, BindingEngine, Disposable } from 'aurelia-framework';
+import { Focus } from 'aurelia-templating-resources';
 import $ from 'jquery';
 
 const logger = LogManager.getLogger('autocomplete');
 
-@autoinject()
+@inject(TaskQueue, Optional.of(Focus), BindingEngine)
 export class AutocompleteCustomElement {
+  focusSubscription: Disposable;
   settingValue: boolean;
-  taskQueue: TaskQueue;
+  notFound: boolean;
   isOpen: boolean;
   dropdownElement: Element;
-  toggleElement: Element;
+  toggleElement: HTMLInputElement;
   @bindable limit: number = 10;
   @bindable({ defaultBindingMode: bindingMode.twoWay }) value: any;
   @observable searchText: any;
@@ -18,14 +20,24 @@ export class AutocompleteCustomElement {
 
   items = [];
 
-  constructor(taskQueue: TaskQueue) {
-    this.taskQueue = taskQueue;
+  constructor(private taskQueue: TaskQueue, private focusCustomAttribute: Focus, private bindingEngine: BindingEngine) {
   }
 
   bind() {
+    if (this.focusCustomAttribute != null) {
+      this.focusSubscription = this.bindingEngine.propertyObserver(this.focusCustomAttribute, 'value')
+        .subscribe((newValue, oldValue) => {
+          logger.debug('focus changes', newValue, oldValue);
+          if (newValue) {
+            logger.debug('Focusing on input');
+            this.taskQueue.queueMicroTask(() => this.toggleElement.focus());
+          }
+        });
+    }
+
     $(this.dropdownElement)
       .on('show.bs.dropdown', () => {
-        return this.items.length > 0;
+        return this.searchText != null && this.searchText.length > 0;
       })
       .on('shown.bs.dropdown', () => {
         this.isOpen = true;
@@ -47,15 +59,23 @@ export class AutocompleteCustomElement {
       this.data({ filter: newValue, limit: this.limit })
         .then(result => {
           this.handleData(result);
+        })
+        .then(() => {
+          this.setNotFound(newValue);
         });
     } else {
       this.handleStatic(this.data);
+      this.setNotFound(newValue);
     }
 
     if (!this.isOpen) {
       logger.debug('toggleElement', this.toggleElement);
       $(this.toggleElement).dropdown('toggle');
     }
+  }
+
+  setNotFound(searchText) {
+    this.notFound = searchText != null && this.items.length === 0;
   }
 
   setValue(item) {
@@ -66,6 +86,13 @@ export class AutocompleteCustomElement {
     this.taskQueue.queueMicroTask(() => {
       this.settingValue = false;
     })
+  }
+
+  focus() {
+    logger.debug('focus');
+    if (this.searchText != null) {
+      this.toggleElement.setSelectionRange(0, this.searchText.length);
+    }
   }
 
   handleData(result) {
@@ -84,15 +111,21 @@ export class AutocompleteCustomElement {
   }
 
   handleStatic(data) {
-
   }
 
   emphasize(regex: RegExp, name: string) {
     return name.replace(regex, "<b>$1</b>");
   }
 
-  lookup(event: any) {
+  valueChanged(newValue) {
+    if (newValue == null) {
+      this.searchText = null;
+    }
+  }
 
-    return true;
+  detached() {
+    if (this.focusSubscription != null) {
+      this.focusSubscription.dispose();
+    }
   }
 }

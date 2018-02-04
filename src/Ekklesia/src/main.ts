@@ -1,13 +1,19 @@
 /// <reference types="aurelia-loader-webpack/src/webpack-hot-interface"/>
 // we want font-awesome to load as soon as possible to show the fa-spinner
-import {Aurelia} from 'aurelia-framework'
+import {Aurelia} from 'aurelia-framework';
 import environment from './environment';
 import {PLATFORM} from 'aurelia-pal';
 import * as Bluebird from 'bluebird';
 import 'bootstrap';
 import 'whatwg-fetch';
-import 'tether';
-import 'velocity-animate';
+
+//--------------
+// Font Awesome
+//--------------
+import fontawesome from '@fortawesome/fontawesome';
+import faTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+fontawesome.library.add(faTrash);
+//--------------
 
 // remove out if you don't want a Promise polyfill (remove also from webpack.config.js)
 Bluebird.config({ warnings: { wForgottenReturn: false } });
@@ -20,7 +26,9 @@ export function configure(aurelia: Aurelia) {
     .plugin(PLATFORM.moduleName('aurelia-api'), config => {
       config.registerEndpoint('api', 'api/');
     })
-    .plugin(PLATFORM.moduleName('aurelia-bootstrap'), config => config.options.version = 4)
+    .plugin(PLATFORM.moduleName('aurelia-dragula'), options => {
+      //options.revertOnSpill = false;
+    })
     .globalResources([
     ]);
 

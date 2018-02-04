@@ -1,5 +1,5 @@
 import { EventAggregator, Subscription } from 'aurelia-event-aggregator';
-import { autoinject, LogManager, observable } from 'aurelia-framework';
+import { autoinject, LogManager, observable, TaskQueue } from 'aurelia-framework';
 import { SignalRService } from 'common/signalr-service';
 import { SongService } from 'common/song-service';
 
@@ -7,13 +7,14 @@ const logger = LogManager.getLogger('control');
 
 @autoinject()
 export class Control {
+  autocompleteHasFocus: boolean;
   subscriptions: Subscription[];
   currentSong: any;
   songAttributes: ['hymnNumber', 'title'];
   songLabel = song => `${song.title} (${song.hymnNumber})`;
   @observable songName: string;
 
-  constructor(private signalRService: SignalRService, private songService: SongService, private eventAggregator: EventAggregator) {
+  constructor(private signalRService: SignalRService, private songService: SongService, private eventAggregator: EventAggregator, private taskQueue: TaskQueue) {
     this.subscriptions = [
       eventAggregator.subscribe('song:select', song => { this.currentSong = song; })
     ];
@@ -35,11 +36,21 @@ export class Control {
 
   songNameChanged(newValue: string) {
     logger.debug('songNameChanged', newValue);
+    if (newValue == null) return;
+
     this.songService.getSong(newValue)
-      .then(song => this.eventAggregator.publish('song:enqueue', song));
+      .then(song => {
+        this.eventAggregator.publish('song:enqueue', song);
+        this.songName = null;
+        this.autocompleteHasFocus = false;
+        this.taskQueue.queueMicroTask(() => {
+          this.autocompleteHasFocus = true;
+        });
+      });
   }
 
   getSongs(filter: string, limit: number) {
+    if (filter == null || filter.length === 0) return Promise.resolve([]);
     return this.songService.getSongs(filter, limit);
   }
 
