@@ -14,6 +14,9 @@
       <p class="mb-1">
         ${item.author}
       </p>
+      <p if.bind="item.singbackAvailable">
+        <i class="fas fa-music"></i>
+      </p>
     </a>
   </div>
 </template>

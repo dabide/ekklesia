@@ -11,7 +11,11 @@ import 'whatwg-fetch';
 // Font Awesome
 //--------------
 import fontawesome from '@fortawesome/fontawesome';
+
+import faMusic from '@fortawesome/fontawesome-free-solid/faMusic';
 import faTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+
+fontawesome.library.add(faMusic);
 fontawesome.library.add(faTrash);
 //--------------
 

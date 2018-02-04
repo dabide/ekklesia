@@ -5,7 +5,7 @@ using TagLib.Ogg;
 using File = TagLib.File;
 using Tag = TagLib.Id3v2.Tag;
 
-namespace Ekklesia.Tools
+namespace Ekklesia.Audio
 {
     public static class TagExtensions
     {

@@ -17,7 +17,7 @@ const title = 'Aurelia Navigation Skeleton';
 const outDir = path.resolve(__dirname, project.platform.output);
 const srcDir = path.resolve(__dirname, 'src');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
-const baseUrl = '/';
+const baseUrl = '/dist/';
 
 const cssRules = [
   { loader: 'css-loader' },
@@ -101,6 +101,7 @@ module.exports = ({production, server, extractCss, coverage} = {}) => ({
       { test: /\.woff(\?v=[0-9]\.[0-9]\.[0-9])?$/i, loader: 'url-loader', options: { limit: 10000, mimetype: 'application/font-woff' } },
       // load these fonts normally, as files:
       { test: /\.(ttf|eot|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/i, loader: 'file-loader' },
+      { test: /\.swf(\?v=[0-9]\.[0-9]\.[0-9])?$/i, loader: 'file-loader' },
       ...when(coverage, {
         test: /\.[jt]s$/i, loader: 'istanbul-instrumenter-loader',
         include: srcDir, exclude: [/\.{spec,test}\.[jt]s$/i],

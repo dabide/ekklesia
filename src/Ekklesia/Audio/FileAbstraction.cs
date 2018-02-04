@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
-using ServiceStack;
 using File = TagLib.File;
 
-namespace Ekklesia.Tools
+namespace Ekklesia.Audio
 {
     public class FileAbstraction : File.IFileAbstraction
     {
@@ -18,7 +17,7 @@ namespace Ekklesia.Tools
 
         public void CloseStream(Stream stream)
         {
-            if (stream == null) throw new ArgumentNullException("stream");
+            if (stream == null) throw new ArgumentNullException(nameof(stream));
 
             stream.Close();
         }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Text.RegularExpressions;
+using Ekklesia.Audio;
 using Ekklesia.Songs;
 using ServiceStack;
 using ServiceStack.Caching;
@@ -16,12 +18,16 @@ namespace Ekklesia.Services
         private readonly ISongParser _songParser;
         private readonly ICacheClient _cacheClient;
 
-        public SongService(IEkklesiaConfiguration ekklesiaConfiguration, IFileSystem fileSystem, ISongParser songParser, ICacheClient cacheClient)
+        private static bool _singbackIsScanned;
+        private readonly ISingbackScanner _singbackScanner;
+
+        public SongService(IEkklesiaConfiguration ekklesiaConfiguration, IFileSystem fileSystem, ISongParser songParser, ICacheClient cacheClient, ISingbackScanner singbackScanner)
         {
             _ekklesiaConfiguration = ekklesiaConfiguration;
             _fileSystem = fileSystem;
             _songParser = songParser;
             _cacheClient = cacheClient;
+            _singbackScanner = singbackScanner;
         }
 
         public SongResponse Get(SongRequest request)
@@ -29,6 +35,9 @@ namespace Ekklesia.Services
             string fileName = _fileSystem.Path.Combine(_ekklesiaConfiguration.SongsFolder, request.Name);
             string songXml = _fileSystem.File.ReadAllText(fileName);
             Song song = _songParser.Parse(songXml, request.Name);
+
+            song.SingbackAvailable = IsSingbackAvailable(song);
+        
             return new SongResponse {Song = song};
         }
 
@@ -43,6 +52,57 @@ namespace Ekklesia.Services
             {
                 SongNames = songNames.ToList()
             };
+        }
+
+        public HttpResult Get(SingbackRequest request)
+        {
+            string path = GetSingbackPath(request.SongNumber);
+            return new HttpResult(new FileInfo(path), "audio/mpeg");
+        }
+
+        private bool IsSingbackAvailable(Song song)
+        {
+            ScanSingbackIfNecessary();
+
+            var singbackPath = GetSingbackPath(song);
+            return singbackPath != null;
+        }
+
+        private string GetSingbackPath(Song song)
+        {
+            return GetSingbackPath(song.HymnNumber);
+        }
+
+        private string GetSingbackPath(string hymnNumber)
+        {
+            if (hymnNumber == null)
+            {
+                return null;
+            }
+
+            string songNumber = Regex.Replace(hymnNumber, @"^\D*(\d+)\D*$", "$1");
+            string singbackPath = _cacheClient.Get<string>(GetSongNumberKey(songNumber));
+            return singbackPath;
+        }
+
+        private static string GetSongNumberKey(string songNumber)
+        {
+            return $"singback:{songNumber}";
+        }
+
+        private void ScanSingbackIfNecessary()
+        {
+            if (_singbackIsScanned)
+            {
+                return;
+            }
+
+            foreach (KeyValuePair<string, string> keyValuePair in _singbackScanner.Scan())
+            {
+                _cacheClient.Set(GetSongNumberKey(keyValuePair.Key), keyValuePair.Value);
+            }
+
+            _singbackIsScanned = true;
         }
 
         private string[] GetFiles()
@@ -85,5 +145,11 @@ namespace Ekklesia.Services
     internal class SongSearchResponse
     {
         public List<string> SongNames { get; set; }
+    }
+
+    [Route("/api/singback/{SongNumber}")]
+    internal class SingbackRequest : IReturn<HttpResult>
+    {
+        public string SongNumber { get; set; }
     }
 }

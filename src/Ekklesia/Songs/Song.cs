@@ -23,6 +23,7 @@ namespace Ekklesia.Songs
         public string Key { get; set; }
         public string Aka { get; set; }
         public string KeyLine { get; set; }
+        public bool SingbackAvailable { get; set; }
         public Dictionary<string, SongPart> Lyrics { get; set; }
     }
 }

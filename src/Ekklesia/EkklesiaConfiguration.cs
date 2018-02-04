@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ServiceStack;
+﻿using ServiceStack;
 
 namespace Ekklesia
 {
@@ -10,6 +8,8 @@ namespace Ekklesia
         public string RecordingsFolder => Get<string>(nameof(RecordingsFolder));
 
         public string SongsFolder => Get<string>(nameof(SongsFolder));
+
+        public string SingbackFolder => Get<string>(nameof(SingbackFolder));
 
         public int StreamingPort => Get(nameof(StreamingPort), 44100);
 

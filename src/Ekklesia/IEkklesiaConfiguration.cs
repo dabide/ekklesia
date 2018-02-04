@@ -8,6 +8,7 @@ namespace Ekklesia
         bool DebugMode { get; }
         string RecordingsFolder { get; }
         string SongsFolder { get; }
+        string SingbackFolder { get; }
         int StreamingPort { get; }
         string IceCastServer { get; }
         int IceCastPort { get; }

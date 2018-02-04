@@ -8,7 +8,8 @@
       <queue></queue>
     </div>
     <div class="col-8">
-      <h1>${message}</h1>
+      <h1>${currentSong.title}</h1>
+      <media-element if.bind="currentSong.singbackAvailable" url.bind="singbackUrl"></media-element>
       <div class="list-group">
         <a repeat.for="identifier of currentSong.presentation" href="javascript:void(0)" keydown.delegate="navigate($event, $index)"
           click.delegate="display(currentSong.lyrics[identifier])" class="list-group-item list-group-item-action flex-column align-items-start ${currentSong.lyrics[identifier].active ? 'active' : ''}">

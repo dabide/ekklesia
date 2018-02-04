@@ -8,6 +8,7 @@ const logger = LogManager.getLogger('control');
 @autoinject()
 export class Control {
   autocompleteHasFocus: boolean;
+  singbackUrl: string;
   subscriptions: Subscription[];
   currentSong: any;
   songAttributes: ['hymnNumber', 'title'];
@@ -16,7 +17,10 @@ export class Control {
 
   constructor(private signalRService: SignalRService, private songService: SongService, private eventAggregator: EventAggregator, private taskQueue: TaskQueue) {
     this.subscriptions = [
-      eventAggregator.subscribe('song:select', song => { this.currentSong = song; })
+      eventAggregator.subscribe('song:select', song => { 
+        this.currentSong = song;
+        this.singbackUrl = `/api/singback/${song.hymnNumber}`;
+       })
     ];
   }
 

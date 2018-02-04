@@ -22,6 +22,7 @@
     "bootstrap": "^4.0.0-beta.3",
     "extend": "^3.0.1",
     "jquery": "^3.2.1",
+    "mediaelement": "^4.2.8",
     "popper.js": "^1.12.9",
     "screenfull": "^3.3.2",
     "tether": "^1.4.3",
