@@ -1,15 +1,15 @@
 <template>
-  <div>
-    <span if.bind="!playing" click.trigger="play()" class="btn btn-default">
+  <div class="btn-group" role="group">
+    <button if.bind="!playing" click.trigger="play()" class="btn btn-default">
       <i class="fas fa-play fa-2x"></i>
-    </span>
-    <span if.bind="playing" click.trigger="pause()" class="btn btn-default">
+    </button>
+    <button if.bind="playing" click.trigger="pause()" class="btn btn-default">
       <i class="fas fa-pause fa-2x"></i>
     </span>
-    <span click.trigger="stop()" class="btn btn-default">
-        <i class="fas fa-stop fa-2x"></i>
-      </span>
-    </div>
+    <button click.trigger="stop()" class="btn btn-default">
+      <i class="fas fa-stop fa-2x"></i>
+    </button>
+  </div>
   <div class="progress mb-2">
     <div class="progress-bar" role="progressbar" style="width: ${progress & throttle}%" aria-valuenow="${progress & throttle}"
       aria-valuemin="0" aria-valuemax="100">
