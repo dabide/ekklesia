@@ -6,7 +6,7 @@ const logger = LogManager.getLogger('song-part');
 
 @autoinject()
 export class SongPart {
-  lineContainer: Element;
+  lineContainer: HTMLElement;
   @bindable lines: any;
 
   constructor(private taskQueue: TaskQueue, private animator: Animator) {

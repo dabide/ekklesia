@@ -1,9 +1,10 @@
 import { SongService } from 'common/song-service';
 import { SongContext } from './song-context';
-import { autoinject, LogManager, RouterConfiguration, Router, RouteConfig, NavigationInstruction, PLATFORM, Container } from 'aurelia-framework';
+import { autoinject, LogManager, PLATFORM, Container } from 'aurelia-framework';
 import { EventAggregator } from 'aurelia-event-aggregator';
 import screenfull from 'screenfull';
 import './view.scss';
+import { RouterConfiguration, Router, RouteConfig, NavigationInstruction } from 'aurelia-router';
 
 const logger = LogManager.getLogger('view');
 
