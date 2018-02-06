@@ -9,6 +9,11 @@ namespace Ekklesia.Hubs
         {
             await Clients.All.InvokeAsync("Send", message);
         }
+
+        public async Task Browse(BrowseMessage message)
+        {
+            await Clients.All.InvokeAsync("Send", message);
+        }
     }
 
     internal class ChangeSongPartMessage : MessageBase
@@ -19,6 +24,15 @@ namespace Ekklesia.Hubs
 
         public string Id { get; set; }
         public string PartIdentifier { get; set; }
+    }
+
+    internal class BrowseMessage : MessageBase
+    {
+        protected BrowseMessage() : base("url:browse")
+        {
+        }
+
+        public string Url { get; set; }
     }
 
     internal class MessageBase

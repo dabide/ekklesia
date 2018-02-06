@@ -37,7 +37,7 @@ export class App {
     config.map([
       { route: '', name: 'home', moduleId: PLATFORM.moduleName('home/home'), nav: true, title: 'Home' },
       { route: 'control', name: 'control', moduleId: PLATFORM.moduleName('control/control'), nav: true, title: 'Control' },
-      { route: ['view','view/:song'], name: 'view', moduleId: PLATFORM.moduleName('view/view'), nav: true, title: 'View' }
+      { route: 'view', name: 'view', moduleId: PLATFORM.moduleName('view/view'), nav: true, title: 'View' }
     ]);
 
     this.router = router;

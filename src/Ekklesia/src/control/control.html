@@ -3,24 +3,38 @@
   <div class="row">
     <div class="col-4">
       <form>
-        <autocomplete data.call="getSongs(filter, limit)" value.two-way="songName" placeholder="Select a song" focus.bind="autocompleteHasFocus"></autocomplete>
+        <autocomplete data.call="getItems(filter, limit)" value.two-way="item" placeholder="Select a song or an URL" focus.bind="autocompleteHasFocus"></autocomplete>
       </form>
       <queue></queue>
     </div>
-    <div class="col-8">
-      <h1>${currentSong.title}</h1>
-      <media-element if.bind="currentSong.singbackAvailable" url.bind="singbackUrl"></media-element>
+    <div if.bind="!currentItem.url" class="col-8">
+      <h1>${currentItem.title}</h1>
+      <media-element if.bind="currentItem.singbackAvailable" url.bind="singbackUrl"></media-element>
       <div class="list-group">
-        <a repeat.for="identifier of currentSong.presentation" href="javascript:void(0)" keydown.delegate="navigate($event, $index)"
-          click.delegate="display(currentSong.lyrics[identifier])" class="list-group-item list-group-item-action flex-column align-items-start ${currentSong.lyrics[identifier].active ? 'active' : ''}">
+        <a repeat.for="identifier of currentItem.presentation" href="javascript:void(0)" keydown.delegate="navigate($event, $index)"
+          click.delegate="display(currentItem.lyrics[identifier])" class="list-group-item list-group-item-action flex-column align-items-start ${currentItem.lyrics[identifier].active ? 'active' : ''}">
           <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">${identifier}</h5>
           </div>
           <p class="mb-1">
-            <span repeat.for="line of currentSong.lyrics[identifier].lines">${line}
+            <span repeat.for="line of currentItem.lyrics[identifier].lines">${line}
               <br if.bind="!$last">
             </span>
           </p>
+        </a>
+      </div>
+    </div>
+    <div if.bind="currentItem.url">
+      <h1>${currentItem.title}</h1>
+      <div class="list-group">
+        <a href="javascript:void(0)" click.delegate="browse(item.url)" class="list-group-item list-group-item-action flex-column align-items-start active">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">
+              <i class.bind="currentItem.icon"></i> ${currentItem.title}</h5>
+            <p class="mb-1">
+              ${currentItem.author}
+            </p>
+          </div>
         </a>
       </div>
     </div>

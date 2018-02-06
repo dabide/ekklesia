@@ -1,3 +1,4 @@
+import { YouTubeService } from 'common/youtube-service';
 import { autoinject, LogManager } from 'aurelia-framework';
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { moveBefore } from 'aurelia-dragula';
@@ -10,15 +11,15 @@ export class Queue {
   items = [];
   subscriptions;
 
-  constructor(private eventAggregator: EventAggregator) {
+  constructor(private eventAggregator: EventAggregator, private youTubeService: YouTubeService) {
     this.subscriptions = [
-      eventAggregator.subscribe('song:enqueue', song => { this.items.push(song); })
+      eventAggregator.subscribe('item:enqueue', item => { this.items.push(item); })
     ];
   }
 
   select(item) {
     this.currentItem = item;
-    this.eventAggregator.publish('song:select', item);
+    this.eventAggregator.publish('item:select', item);
   }
 
   itemDropped(item, target, source, sibling, itemVM, siblingVM) {

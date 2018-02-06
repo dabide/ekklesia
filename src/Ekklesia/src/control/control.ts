@@ -1,3 +1,4 @@
+import { UrlHelper } from 'common/url-helper';
 import { EventAggregator, Subscription } from 'aurelia-event-aggregator';
 import { autoinject, LogManager, observable, TaskQueue } from 'aurelia-framework';
 import { SignalRService } from 'common/signalr-service';
@@ -10,17 +11,24 @@ export class Control {
   autocompleteHasFocus: boolean;
   singbackUrl: string;
   subscriptions: Subscription[];
-  currentSong: any;
-  songAttributes: ['hymnNumber', 'title'];
-  songLabel = song => `${song.title} (${song.hymnNumber})`;
-  @observable songName: string;
+  currentItem: any;
+  @observable item: any;
 
-  constructor(private signalRService: SignalRService, private songService: SongService, private eventAggregator: EventAggregator, private taskQueue: TaskQueue) {
+  constructor(
+    private signalRService: SignalRService,
+    private songService: SongService,
+    private eventAggregator: EventAggregator,
+    private taskQueue: TaskQueue,
+    private urlHelper: UrlHelper
+  ) {
     this.subscriptions = [
-      eventAggregator.subscribe('song:select', song => { 
-        this.currentSong = song;
-        this.singbackUrl = `/api/singback/${song.hymnNumber}`;
-       })
+      eventAggregator.subscribe('item:select', item => {
+        logger.debug('Item selected', item);
+        this.currentItem = item;
+        if (item.url == null) {
+          this.singbackUrl = `/api/singback/${item.hymnNumber}`;
+        }
+      })
     ];
   }
 
@@ -31,30 +39,42 @@ export class Control {
   }
 
   display(songPart: any) {
-    for (let identifier of this.currentSong.presentation) {
-      this.currentSong.lyrics[identifier].active = false;
+    for (let identifier of this.currentItem.presentation) {
+      this.currentItem.lyrics[identifier].active = false;
     }
     songPart.active = true;
-    this.signalRService.hubConnection.invoke('changeSongPart', { id: this.currentSong.id, partIdentifier: songPart.identifier });
+    this.signalRService.hubConnection.invoke('changeSongPart', { id: this.currentItem.id, partIdentifier: songPart.identifier });
   }
 
-  songNameChanged(newValue: string) {
-    logger.debug('songNameChanged', newValue);
+  browse(item: any) {
+    this.signalRService.hubConnection.invoke('browse', { url: this.currentItem.url });
+  }
+
+  itemChanged(newValue: any) {
+    logger.debug('itemChanged', newValue);
     if (newValue == null) return;
 
-    this.songService.getSong(newValue)
-      .then(song => {
-        this.eventAggregator.publish('song:enqueue', song);
-        this.songName = null;
-        this.autocompleteHasFocus = false;
-        this.taskQueue.queueMicroTask(() => {
-          this.autocompleteHasFocus = true;
-        });
-      });
+    if (typeof newValue === 'string') {
+      this.songService.getSong(newValue)
+        .then(song => this.enqueue(song));
+    } else {
+      this.urlHelper.enhance(newValue)
+        .then(item => this.enqueue(item));
+    }
   }
 
-  getSongs(filter: string, limit: number) {
+  enqueue(item: any) {
+    this.eventAggregator.publish('item:enqueue', item);
+    this.item = null;
+    this.autocompleteHasFocus = false;
+    this.taskQueue.queueMicroTask(() => {
+      this.autocompleteHasFocus = true;
+    });
+  }
+
+  getItems(filter: string, limit: number) {
     if (filter == null || filter.length === 0) return Promise.resolve([]);
+    if (filter.startsWith('http')) return Promise.resolve([{ id: filter, name: filter, url: filter, icon: 'fas fa-globe' }]);
     return this.songService.getSongs(filter, limit);
   }
 
@@ -62,14 +82,14 @@ export class Control {
     switch (event.code) {
       case "ArrowUp":
         if (index > 0) {
-          this.display(this.currentSong.lyrics[this.currentSong.presentation[index - 1]]);
+          this.display(this.currentItem.lyrics[this.currentItem.presentation[index - 1]]);
           (<HTMLElement>event.srcElement.previousElementSibling).focus();
         }
         event.stopPropagation();
         break;
       case "ArrowDown":
-        if (index < this.currentSong.presentation.length - 1) {
-          this.display(this.currentSong.lyrics[this.currentSong.presentation[index + 1]]);
+        if (index < this.currentItem.presentation.length - 1) {
+          this.display(this.currentItem.lyrics[this.currentItem.presentation[index + 1]]);
           (<HTMLElement>event.srcElement.nextElementSibling).focus();
         }
         event.stopPropagation();

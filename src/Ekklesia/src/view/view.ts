@@ -1,7 +1,7 @@
 import { SongService } from 'common/song-service';
-import { SongContext } from './song-context';
+import { ViewerContext } from './viewer-context';
 import { autoinject, LogManager, PLATFORM, Container } from 'aurelia-framework';
-import { EventAggregator } from 'aurelia-event-aggregator';
+import { EventAggregator, Subscription } from 'aurelia-event-aggregator';
 import screenfull from 'screenfull';
 import './view.scss';
 import { RouterConfiguration, Router, RouteConfig, NavigationInstruction } from 'aurelia-router';
@@ -10,19 +10,21 @@ const logger = LogManager.getLogger('view');
 
 @autoinject()
 export class View {
-  songContext: SongContext;
+  viewerContext: ViewerContext;
   router: Router;
   notFullscreen: boolean = true;
   songPart: any;
   private _subscriptions = [];
 
-  constructor(private eventAggregator: EventAggregator, private container: Container, private songService: SongService) {
-    logger.debug('constructor');
-    this.songContext = new SongContext();
-    this.container.registerInstance(SongContext, this.songContext);
+  constructor(private eventAggregator: EventAggregator) {
     this._subscriptions.push(eventAggregator.subscribe('song:change_part', message => {
       logger.debug('Changing song part', message);
-      this.router.parent.navigate(`view/${message.id}/${message.partIdentifier}`);
+      this.router.parent.navigate(`view/song/${message.id}/${message.partIdentifier}`);
+    }));
+
+    this._subscriptions.push(eventAggregator.subscribe('url:browse', message => {
+      logger.debug('Browsing to URL', message);
+      this.router.parent.navigate(`view/browse?url=${encodeURIComponent(message.url)}`);
     }));
   }
 
@@ -30,7 +32,8 @@ export class View {
     logger.debug('configureRouter', config, router);
     config.title = 'Ekklesia';
     config.map([
-      { route: ['', ':part'], name: 'song-part', moduleId: PLATFORM.moduleName('./part'), nav: true, title: 'Part' }
+      { route: ['', 'song', 'song/:song'], name: 'song-view', moduleId: PLATFORM.moduleName('./song-view'), nav: true, title: 'Part' },
+      { route: ['browse'], name: 'web-view', moduleId: PLATFORM.moduleName('./browser'), nav: true, title: 'Browser' }
     ]);
 
     this.router = router;
@@ -45,12 +48,11 @@ export class View {
         this.notFullscreen = !screenfull.isFullscreen;
       });
     }
+  }
 
-    if (params.song !== undefined) {
-      return this.songService.getSong(params.song)
-        .then(song => {
-          this.songContext.song = song;
-        });
+  deactivate() {
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
     }
   }
 
