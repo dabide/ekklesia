@@ -34,6 +34,9 @@
             <p class="mb-1">
               ${currentItem.author}
             </p>
+            <span type="btn btn-default" click.trigger="playVideo($event, item)"><i class="fas fa-play"></i></span>
+            <span type="btn btn-default" click.trigger="pauseVideo($event, item)"><i class="fas fa-pause"></i></span>
+            <span type="btn btn-default" click.trigger="stopVideo($event, item)"><i class="fas fa-stop"></i></span>
           </div>
         </a>
       </div>

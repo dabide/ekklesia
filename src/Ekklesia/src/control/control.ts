@@ -50,6 +50,27 @@ export class Control {
     this.signalRService.hubConnection.invoke('browse', { url: this.currentItem.url });
   }
 
+  playVideo(event: Event, item: any) {
+    logger.debug('press play on tape');
+    this.signalRService.hubConnection.invoke('controlVideo', { action: 'play' });
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }
+
+  pauseVideo(event: Event, item: any) {
+    logger.debug('press pause on tape');
+    this.signalRService.hubConnection.invoke('controlVideo', { action: 'pause' });
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }
+  
+  stopVideo(event: Event, item: any) {
+    logger.debug('press stop on tape');
+    this.signalRService.hubConnection.invoke('controlVideo', { action: 'stop' });
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }
+
   itemChanged(newValue: any) {
     logger.debug('itemChanged', newValue);
     if (newValue == null) return;

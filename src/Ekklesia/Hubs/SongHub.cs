@@ -14,6 +14,11 @@ namespace Ekklesia.Hubs
         {
             await Clients.All.InvokeAsync("Send", message);
         }
+
+        public async Task ControlVideo(VideoControlMessage message)
+        {
+            await Clients.All.InvokeAsync("Send", message);
+        }
     }
 
     internal class ChangeSongPartMessage : MessageBase
@@ -33,6 +38,15 @@ namespace Ekklesia.Hubs
         }
 
         public string Url { get; set; }
+    }
+
+    internal class VideoControlMessage : MessageBase
+    {
+        protected VideoControlMessage() : base("video:control")
+        {
+        }
+
+        public string Action { get; set; }
     }
 
     internal class MessageBase

@@ -36,7 +36,7 @@ export class UrlHelper {
           newUrl.searchParams.delete('v');
           newUrl.pathname = `/embed/${video}`;
           newUrl.searchParams.append('autoplay', '1');
-          item.url = newUrl.toString();
+          item.url = item.url;// newUrl.toString();
           item.icon = this.getIcon(item.url);
           item.title = data.title;
           item.author = data.author_name;

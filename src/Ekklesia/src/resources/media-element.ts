@@ -58,6 +58,10 @@ export class MediaElementCustomElement {
     this.howl.stop();
   }
 
+  detached() {
+    this.stop();
+  }  
+
   setProgress() {
     if (!this.playing || this.duration == 0) return;
 

@@ -24,7 +24,8 @@ export class View {
 
     this._subscriptions.push(eventAggregator.subscribe('url:browse', message => {
       logger.debug('Browsing to URL', message);
-      this.router.parent.navigate(`view/browse?url=${encodeURIComponent(message.url)}`);
+      // this.router.parent.navigate(`view/browse?url=${encodeURIComponent(message.url)}`);
+      this.router.parent.navigate(`view/video?url=${encodeURIComponent(message.url)}`);
     }));
   }
 
@@ -33,7 +34,8 @@ export class View {
     config.title = 'Ekklesia';
     config.map([
       { route: ['', 'song', 'song/:song'], name: 'song-view', moduleId: PLATFORM.moduleName('./song-view'), nav: true, title: 'Part' },
-      { route: ['browse'], name: 'web-view', moduleId: PLATFORM.moduleName('./browser'), nav: true, title: 'Browser' }
+      { route: ['browse'], name: 'web-view', moduleId: PLATFORM.moduleName('./browser'), nav: true, title: 'Browser' },
+      { route: ['video'], name: 'video-player', moduleId: PLATFORM.moduleName('./video-player'), nav: true, title: 'Video Player' }
     ]);
 
     this.router = router;
