@@ -1,18 +1,3 @@
 <template>
-  <div class="btn-group" role="group">
-    <button if.bind="!playing" click.trigger="play()" class="btn btn-default">
-      <i class="fas fa-play fa-2x"></i>
-    </button>
-    <button if.bind="playing" click.trigger="pause()" class="btn btn-default">
-      <i class="fas fa-pause fa-2x"></i>
-    </span>
-    <button click.trigger="stop()" class="btn btn-default">
-      <i class="fas fa-stop fa-2x"></i>
-    </button>
-  </div>
-  <div class="progress mb-2">
-    <div class="progress-bar" role="progressbar" style="width: ${progress & throttle}%" aria-valuenow="${progress & throttle}"
-      aria-valuemin="0" aria-valuemax="100">
-    </div>
-  </div>
+  <playback-controls play.call="play()" pause.call="pause()" stop.call="stop()" playing.bind="playing" progress.bind="progress"></playback-controls>
 </template>

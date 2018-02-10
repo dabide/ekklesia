@@ -8,6 +8,8 @@ const logger = LogManager.getLogger('control');
 
 @autoinject()
 export class Control {
+  playing: boolean;
+  progress: string;
   autocompleteHasFocus: boolean;
   singbackUrl: string;
   subscriptions: Subscription[];
@@ -27,6 +29,33 @@ export class Control {
         this.currentItem = item;
         if (item.url == null) {
           this.singbackUrl = `/api/singback/${item.hymnNumber}`;
+        }
+      }),
+      eventAggregator.subscribe('video:control', message => {
+        switch (message.action) {
+          case 'event:ready':
+            logger.debug('ready');
+            this.currentItem.loaded = true;
+            break;
+
+          case 'event:play':
+            this.playing = true;
+            break;
+
+          case 'event:pause':
+          case 'event:ended':
+            this.playing = false;
+            break;
+
+          case 'event:stop':
+            this.playing = false;
+            this.progress = '0';
+            break;
+
+          case 'event:progress':
+            logger.debug('progress', message.value);
+            this.progress = message.value;
+            break;
         }
       })
     ];
@@ -50,25 +79,19 @@ export class Control {
     this.signalRService.hubConnection.invoke('browse', { url: this.currentItem.url });
   }
 
-  playVideo(event: Event, item: any) {
+  play() {
     logger.debug('press play on tape');
     this.signalRService.hubConnection.invoke('controlVideo', { action: 'play' });
-    event.preventDefault();
-    event.stopImmediatePropagation();
   }
 
-  pauseVideo(event: Event, item: any) {
+  pause() {
     logger.debug('press pause on tape');
     this.signalRService.hubConnection.invoke('controlVideo', { action: 'pause' });
-    event.preventDefault();
-    event.stopImmediatePropagation();
   }
-  
-  stopVideo(event: Event, item: any) {
+
+  stop() {
     logger.debug('press stop on tape');
     this.signalRService.hubConnection.invoke('controlVideo', { action: 'stop' });
-    event.preventDefault();
-    event.stopImmediatePropagation();
   }
 
   itemChanged(newValue: any) {

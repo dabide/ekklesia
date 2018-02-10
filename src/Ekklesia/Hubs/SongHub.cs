@@ -47,6 +47,7 @@ namespace Ekklesia.Hubs
         }
 
         public string Action { get; set; }
+        public string Value { get; set; }
     }
 
     internal class MessageBase

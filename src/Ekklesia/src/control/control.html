@@ -26,17 +26,15 @@
     </div>
     <div if.bind="currentItem.url">
       <h1>${currentItem.title}</h1>
+      <playback-controls disabled.bind="!currentItem.loaded" play.call="play()" pause.call="pause()" stop.call="stop()" progress.bind="progress" playing.bind="playing"></playback-controls>
       <div class="list-group">
-        <a href="javascript:void(0)" click.delegate="browse(item.url)" class="list-group-item list-group-item-action flex-column align-items-start active">
+        <a href="javascript:void(0)" click.delegate="browse(item.url)" class="list-group-item list-group-item-action flex-column align-items-start ${currentItem.loaded ? 'active' : ''}">
           <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">
               <i class.bind="currentItem.icon"></i> ${currentItem.title}</h5>
             <p class="mb-1">
               ${currentItem.author}
             </p>
-            <span type="btn btn-default" click.trigger="playVideo($event, item)"><i class="fas fa-play"></i></span>
-            <span type="btn btn-default" click.trigger="pauseVideo($event, item)"><i class="fas fa-pause"></i></span>
-            <span type="btn btn-default" click.trigger="stopVideo($event, item)"><i class="fas fa-stop"></i></span>
           </div>
         </a>
       </div>
