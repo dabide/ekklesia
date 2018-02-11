@@ -1,6 +1,10 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,9 +16,9 @@ namespace Ekklesia.Audio
 {
     internal class Webcaster : IWebcaster
     {
-        private ILogger _logger = Log.ForContext<Webcaster>();
-        private readonly IIceCaster _iceCaster;
         private readonly IEkklesiaConfiguration _ekklesiaConfiguration;
+        private readonly IIceCaster _iceCaster;
+        private readonly ILogger _logger = Log.ForContext<Webcaster>();
 
         public Webcaster(IIceCaster iceCaster, IEkklesiaConfiguration ekklesiaConfiguration)
         {
@@ -24,14 +28,15 @@ namespace Ekklesia.Audio
 
         public void Start(int port, CancellationToken cancellationToken)
         {
-            var endpoint = new IPEndPoint(IPAddress.Any, port);
-            var server = new WebSocketListener(endpoint, new WebSocketListenerOptions { SubProtocols = new[] { "webcast" } });
+            IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, port);
+            WebSocketListener server =
+                new WebSocketListener(endpoint, new WebSocketListenerOptions {SubProtocols = new[] {"webcast"}});
             server.Standards.RegisterStandard(new WebSocketFactoryRfc6455());
             server.StartAsync(cancellationToken);
 
-            _logger.Information("Webcast server started at " + endpoint.ToString());
+            _logger.Information("Webcast server started at " + endpoint);
 
-            var task = Task.Run(() => AcceptWebSocketClientsAsync(server, cancellationToken));
+            Task.Run(() => AcceptWebSocketClientsAsync(server, cancellationToken), cancellationToken);
 
             _logger.Information($"Listening on port {port}");
         }
@@ -42,10 +47,10 @@ namespace Ekklesia.Audio
             {
                 try
                 {
-                    var webSocketConnection = await server.AcceptWebSocketAsync(token).ConfigureAwait(false);
+                    WebSocket webSocketConnection = await server.AcceptWebSocketAsync(token).ConfigureAwait(false);
                     if (webSocketConnection != null)
                     {
-                        Task _ = Task.Run(() => HandleConnectionAsync(webSocketConnection, token));
+                        HandleConnection(webSocketConnection, token);
                     }
                 }
                 catch (Exception exception)
@@ -57,27 +62,90 @@ namespace Ekklesia.Audio
             _logger.Information("Server stopped accepting clients");
         }
 
-        private async Task HandleConnectionAsync(WebSocket webSocket, CancellationToken cancellation)
+        private void HandleConnection(WebSocket webSocket, CancellationToken cancellation)
         {
-            Stream outStream = null;
-            Stream icecastStream = null;
+            IConnectableObservable<StreamPart> observable = Observable
+                                                            .Create<StreamPart>(async observer => await ObserveAudioStream(webSocket, cancellation, observer))
+                                                            .SubscribeOn(TaskPoolScheduler.Default)
+                                                            .ObserveOn(TaskPoolScheduler.Default)
+                                                            .Publish();
 
+            SubscribeFile(cancellation, observable);
+            SubscribeIcecast(cancellation, observable);
+
+            observable.Connect();
+        }
+
+        private void SubscribeFile(CancellationToken cancellation, IConnectableObservable<StreamPart> observable)
+        {
+            FileStream outStream = null;
+            observable.Subscribe(next =>
+                                 {
+                                     string ext = next.Info.Data.Mime == "audio/mpeg" ? "mp3" : "raw";
+
+                                     if (outStream == null)
+                                     {
+                                         outStream = File.OpenWrite($"websocket-test-{Guid.NewGuid():N}.{ext}");
+                                     }
+
+                                     outStream.Write(next.Data, 0, next.Data.Length);
+                                 }, error =>
+                                    {
+                                        outStream?.Flush();
+                                        outStream?.Dispose();
+                                    }, () =>
+                                    {
+                                        outStream?.Flush();
+                                        outStream?.Dispose();
+                                    }, cancellation);
+        }
+
+        private void SubscribeIcecast(CancellationToken cancellation, IConnectableObservable<StreamPart> observable)
+        {
+            Stream icecastStream = null;
+            observable.Subscribe(next =>
+                                 {
+                                     if (icecastStream == null)
+                                     {
+                                         icecastStream = _iceCaster.StartStreaming(_ekklesiaConfiguration.IceCastServer,
+                                                                                   _ekklesiaConfiguration.IceCastPassword,
+                                                                                   _ekklesiaConfiguration.IceCastMountPoint,
+                                                                                   next.Info.Data.Mime, false, "Test", "Test stream", "http://0.0.0.0",
+                                                                                   "Undefined");
+                                     }
+
+                                     icecastStream.Write(next.Data, 0, next.Data.Length);
+                                 }, error =>
+                                    {
+                                        icecastStream?.Flush();
+                                        icecastStream?.Dispose();
+                                    },
+                                 () =>
+                                 {
+                                     icecastStream?.Flush();
+                                     icecastStream?.Dispose();
+                                 }, cancellation);
+        }
+
+        private async Task<IDisposable> ObserveAudioStream(WebSocket webSocket, CancellationToken cancellation, IObserver<StreamPart> observer)
+        {
             try
             {
                 WebCastMessage helloMessage = null;
                 while (webSocket.IsConnected && !cancellation.IsCancellationRequested)
                 {
-                    var message = await webSocket.ReadMessageAsync(cancellation).ConfigureAwait(false);
+                    WebSocketMessageReadStream message = await webSocket.ReadMessageAsync(cancellation).ConfigureAwait(false);
                     if (message == null) continue;
 
                     switch (message.MessageType)
                     {
                         case WebSocketMessageType.Text:
-                            var messageContent = string.Empty;
-                            using (var streamReader = new StreamReader(message, Encoding.UTF8))
+                            string messageContent;
+                            using (StreamReader streamReader = new StreamReader(message, Encoding.UTF8))
                             {
                                 messageContent = await streamReader.ReadToEndAsync();
                             }
+
                             WebCastMessage webCastMessage = messageContent.FromJson<WebCastMessage>();
 
                             if (helloMessage == null && webCastMessage.Type == "hello")
@@ -90,10 +158,6 @@ namespace Ekklesia.Audio
                                 {
                                     _logger.Debug($"Audio bitrate: {helloMessage.Data.Audio.BitRate}");
                                 }
-                                // We only support mp3 and raw PCM for now
-                                string ext = helloMessage.Data.Mime == "audio/mpeg" ? "mp3" : "raw";
-                                outStream = File.OpenWrite($"websocket-test-{Guid.NewGuid():N}.{ext}");
-                                icecastStream = _iceCaster.StartStreaming(_ekklesiaConfiguration.IceCastServer, _ekklesiaConfiguration.IceCastPassword, _ekklesiaConfiguration.IceCastMountPoint, helloMessage.Data.Mime, false, "Test", "Test stream", "http://0.0.0.0", "Undefined");
                             }
 
                             if (helloMessage != null && webCastMessage.Type != "hello")
@@ -115,9 +179,8 @@ namespace Ekklesia.Audio
                         case WebSocketMessageType.Binary:
                             if (helloMessage != null)
                             {
-                                var bytes = message.ReadFully();
-                                outStream.Write(bytes, 0, bytes.Length);
-                                icecastStream.Write(bytes, 0, bytes.Length);
+                                byte[] bytes = message.ReadFully();
+                                observer.OnNext(new StreamPart {Info = helloMessage, Data = bytes});
                             }
 
                             break;
@@ -129,38 +192,26 @@ namespace Ekklesia.Audio
                         throw new Exception("Should have said hello");
                     }
                 }
-
-                await outStream?.FlushAsync();
-                outStream?.Dispose();
-                outStream = null;
-                await icecastStream?.FlushAsync();
-                icecastStream?.Dispose();
-                icecastStream = null;
             }
             catch (Exception exception)
             {
                 _logger.Error(exception, "Error Handling connection");
-                try
-                {
-                    await outStream?.FlushAsync();
-                    outStream?.Dispose();
-                    await icecastStream?.FlushAsync();
-                    icecastStream?.Dispose();
-                    webSocket.Close();
-                }
-                catch (Exception e)
-                {
-                    _logger.Warning($"Couldn't close: {e}");
-                }
+                observer.OnError(exception);
             }
-            finally
-            {
-                webSocket.Dispose();
-            }
+
+            observer.OnCompleted();
+
+            return Disposable.Create(webSocket.Dispose);
         }
     }
 
-    class WebCastMessage
+    internal class StreamPart
+    {
+        public WebCastMessage Info { get; set; }
+        public byte[] Data { get; set; }
+    }
+
+    internal class WebCastMessage
     {
         public string Type { get; set; }
         public WebCastData Data { get; set; }

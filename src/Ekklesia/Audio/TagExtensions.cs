@@ -13,15 +13,17 @@ namespace Ekklesia.Audio
         {
             if (tagFile.GetTag(TagTypes.Id3v2) is Tag id3V2Tag)
             {
-                var userTextInformationFrame = UserTextInformationFrame.Get(id3V2Tag, key, StringType.UTF8,
-                                                                            false,
-                                                                            true);
+                UserTextInformationFrame userTextInformationFrame = UserTextInformationFrame.Get(id3V2Tag, key, StringType.UTF8,
+                                                                                                 false,
+                                                                                                 true);
 
                 return userTextInformationFrame != null ? string.Join(';', userTextInformationFrame.Text) : null;
             }
 
             if (tagFile.GetTag(TagTypes.Xiph) is XiphComment xiphComment)
+            {
                 return xiphComment.GetFirstField(key.ToUpperInvariant());
+            }
 
             throw new ArgumentException(nameof(tagFile));
         }
@@ -30,13 +32,17 @@ namespace Ekklesia.Audio
         {
             if (tagFile.GetTag(TagTypes.Id3v2) is Tag id3V2Tag)
             {
-                var userTextInformationFrame = UserTextInformationFrame.Get(id3V2Tag, key, StringType.UTF8,
-                                                                            true,
-                                                                            true);
+                UserTextInformationFrame userTextInformationFrame = UserTextInformationFrame.Get(id3V2Tag, key, StringType.UTF8,
+                                                                                                 true,
+                                                                                                 true);
                 if (string.IsNullOrEmpty(value))
+                {
                     id3V2Tag.RemoveFrame(userTextInformationFrame);
+                }
                 else
+                {
                     userTextInformationFrame.Text = value.Split(';');
+                }
             }
             else if (tagFile.GetTag(TagTypes.Xiph) is XiphComment xiphComment)
             {

@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.0.0-alpha2-final" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
     <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="System.Reactive" Version="4.0.0-preview00001" />
     <PackageReference Include="Taglib-Sharp-NetStandard" Version="1.0.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />

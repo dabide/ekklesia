@@ -1,6 +1,6 @@
 import { autoinject, LogManager } from 'aurelia-framework';
 import { activationStrategy } from 'aurelia-router';
-import * as Rx from 'rxjs';
+import * as Rx from 'rxjs/Rx';
 import * as videojs from 'video.js';
 import { Player } from 'videojs';
 import 'videojs-youtube/dist/Youtube';

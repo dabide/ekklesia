@@ -3,20 +3,19 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using Serilog;
 
 namespace Ekklesia.Audio
 {
     internal class IceCaster : IIceCaster
     {
-        public Stream StartStreaming(string host, string password, string mountPoint, string mimeType, bool isPublic, string name, string description, string url, string genre, int port = 8000)
+        public Stream StartStreaming(string host, string password, string mountPoint, string mimeType, bool isPublic, string name, string description,
+            string url, string genre, int port = 8000)
         {
             IceCastStream iceCastStream = new IceCastStream(host, port);
 
-            var byteArray = Encoding.ASCII.GetBytes($"source:{password}");
-            var basicAuth = Convert.ToBase64String(byteArray);
+            byte[] byteArray = Encoding.ASCII.GetBytes($"source:{password}");
+            string basicAuth = Convert.ToBase64String(byteArray);
 
             StreamWriter streamWriter = new StreamWriter(iceCastStream, Encoding.ASCII);
             StreamReader streamReader = new StreamReader(iceCastStream, Encoding.ASCII);
@@ -37,7 +36,7 @@ namespace Ekklesia.Audio
             streamWriter.WriteLine("Expect: 100-continue");
             streamWriter.WriteLine();
             streamWriter.Flush();
-            var response = streamReader.ReadLine();
+            string response = streamReader.ReadLine();
             if (response == null)
             {
                 throw new IceCastException("Server didn't respond");
@@ -58,8 +57,8 @@ namespace Ekklesia.Audio
 
         private class IceCastStream : Stream
         {
-            private ILogger _logger = Log.ForContext<IceCastStream>();
-            private Stream _icecastStream = null;
+            private readonly ILogger _logger = Log.ForContext<IceCastStream>();
+            private Stream _icecastStream;
             private TcpClient _tcpClient = new TcpClient();
 
             public IceCastStream(string host, int port)
@@ -68,7 +67,6 @@ namespace Ekklesia.Audio
                 {
                     _tcpClient.Connect(host, port);
                     _icecastStream = _tcpClient.GetStream();
-
                 }
                 catch (Exception e)
                 {
@@ -78,6 +76,20 @@ namespace Ekklesia.Audio
                 }
             }
 
+            public override bool CanRead => true;
+
+            public override bool CanSeek => false;
+
+            public override bool CanWrite => true;
+
+            public override long Length => throw new NotImplementedException();
+
+            public override long Position
+            {
+                get => throw new NotImplementedException();
+                set => throw new NotImplementedException();
+            }
+
             private void CleanUp()
             {
                 _icecastStream?.Dispose();
@@ -85,15 +97,6 @@ namespace Ekklesia.Audio
                 _tcpClient.Dispose();
             }
 
-            public override bool CanRead => false;
-
-            public override bool CanSeek => false;
-
-            public override bool CanWrite => true;
-
-            public override long Length => throw new System.NotImplementedException();
-
-            public override long Position { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
             public override void Flush()
             {
                 _icecastStream.Flush();
@@ -101,17 +104,25 @@ namespace Ekklesia.Audio
 
             public override int Read(byte[] buffer, int offset, int count)
             {
-                throw new System.NotImplementedException();
+                try
+                {
+                    return _icecastStream.Read(buffer, offset, count);
+                }
+                catch (Exception e)
+                {
+                    CleanUp();
+                    throw new IceCastException("Couldn't read", e);
+                }
             }
 
             public override long Seek(long offset, SeekOrigin origin)
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
 
             public override void SetLength(long value)
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
 
             public override void Write(byte[] buffer, int offset, int count)
