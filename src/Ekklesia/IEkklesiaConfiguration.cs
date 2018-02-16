@@ -13,6 +13,5 @@ namespace Ekklesia
         string IceCastServer { get; }
         int IceCastPort { get; }
         string IceCastPassword { get; }
-        string IceCastMountPoint { get; }
     }
 }

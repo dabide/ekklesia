@@ -26,6 +26,7 @@
     "extend": "^3.0.1",
     "howler": "^2.0.8",
     "jquery": "^3.2.1",
+    "pizzicato": "^0.6.3",
     "popper.js": "^1.12.9",
     "rxjs": "^5.5.6",
     "screenfull": "^3.3.2",
@@ -34,6 +35,7 @@
     "velocity-animate": "^1.5.1",
     "video.js": "^6.6.3",
     "videojs-youtube": "^2.4.1",
+    "webcast": "https://github.com/webcast/webcast.js",
     "whatwg-fetch": "^2.0.3"
   },
   "peerDependencies": {},

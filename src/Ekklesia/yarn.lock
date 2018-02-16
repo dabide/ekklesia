@@ -6092,6 +6092,10 @@ pinkie@^2.0.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
 
+pizzicato@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/pizzicato/-/pizzicato-0.6.3.tgz#b6b0a0a03d40b43c2ec25982597df5b313d2dc9e"
+
 pkg-dir@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/pkg-dir/-/pkg-dir-2.0.0.tgz#f6d5d1109e19d63edf428e0bd57e12777615334b"
@@ -8654,6 +8658,10 @@ wcwidth@^1.0.0:
   resolved "https://registry.yarnpkg.com/wcwidth/-/wcwidth-1.0.1.tgz#f0b0dcf915bc5ff1528afadb2c0e17b532da2fe8"
   dependencies:
     defaults "^1.0.3"
+
+"webcast@https://github.com/webcast/webcast.js":
+  version "0.0.0"
+  resolved "https://github.com/webcast/webcast.js#3bdd032e33775bfe9a10dabba224fd24f931d2b6"
 
 webdriver-js-extender@^1.0.0:
   version "1.0.0"

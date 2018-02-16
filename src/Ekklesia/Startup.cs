@@ -43,7 +43,7 @@ namespace Ekklesia
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILifetimeScope lifetimeScope)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILifetimeScope lifetimeScope, IApplicationLifetime applicationLifetime)
         {
             LicenseUtils.RegisterLicense(Configuration["servicestack:license"]);
 
@@ -88,8 +88,13 @@ namespace Ekklesia
                     defaults: new { controller = "Home", action = "Index" });
             });
 
-            CancellationTokenSource cancellation = new CancellationTokenSource();
-            lifetimeScope.Resolve<IWebcaster>().Start(8003, cancellation.Token);
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            lifetimeScope.Resolve<IWebcaster>().Start(8003, cancellationTokenSource.Token);
+
+            applicationLifetime.ApplicationStopping.Register(() =>
+            {
+                cancellationTokenSource.Cancel();
+            });
         }
     }
 }
