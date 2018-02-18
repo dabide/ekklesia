@@ -1,9 +1,18 @@
 <template>
   <div class="dropdown" ref="dropdownElement">
-    <input type="search" class="form-control dropdown-toggle" focus.trigger="focus()" value.bind="searchText & debounce" data-toggle="dropdown" ref="toggleElement" aria-haspopup="true" aria-expanded="false" placeholder.bind="placeholder">
-    <div class="dropdown-menu">
-      <button repeat.for="item of items" class="dropdown-item" click.trigger="setValue(item)" innerhtml.bind="item.name | sanitizeHTML"></button>
-      <div if.bind="notFound" class="dropdown-item">Nothing found</div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <slot name="prepend"></slot>
+      </div>
+      <input type="search" class="form-control dropdown-toggle" focus.trigger="focus()" value.bind="searchText & debounce" data-toggle="dropdown"
+        ref="toggleElement" aria-haspopup="true" aria-expanded="false" placeholder.bind="placeholder">
+      <div class="dropdown-menu">
+        <button repeat.for="item of items" class="dropdown-item" click.trigger="setValue(item)" innerhtml.bind="item.name | sanitizeHTML"></button>
+        <div if.bind="notFound" class="dropdown-item">Nothing found</div>
+      </div>
+      <div class="input-group-append">
+        <slot name="append"></slot>
+      </div>
     </div>
   </div>
 </template>

@@ -1,4 +1,4 @@
-import { autoinject, LogManager } from 'aurelia-framework';
+import { autoinject, LogManager, TaskQueue, Task } from 'aurelia-framework';
 import { activationStrategy } from 'aurelia-router';
 import * as Rx from 'rxjs/Rx';
 import * as videojs from 'video.js';
@@ -6,6 +6,7 @@ import { Player } from 'videojs';
 import 'videojs-youtube/dist/Youtube';
 import { EventAggregator, Subscription } from 'aurelia-event-aggregator';
 import { SignalRService } from 'common/signalr-service';
+import './video-player.scss';
 
 const logger = LogManager.getLogger('video-player');
 
@@ -13,12 +14,14 @@ const logger = LogManager.getLogger('video-player');
 export class VideoPlayer {
   timeupdateSubscription: Rx.Subscription;
   video: Player;
+  isVideo: boolean;
   videoElement: HTMLVideoElement;
+  audioElement: HTMLAudioElement;
   subscriptions: Subscription[] = [];
   type: string;
   src: string;
 
-  constructor(private signalRService: SignalRService, private eventAggregator: EventAggregator) {
+  constructor(private signalRService: SignalRService, private eventAggregator: EventAggregator, private taskQueue: TaskQueue) {
     this.subscriptions.push(eventAggregator.subscribe('video:control', message => {
       switch (message.action) {
         case 'play':
@@ -38,18 +41,22 @@ export class VideoPlayer {
       }
     }));
   }
-  
+
   determineActivationStrategy() {
     return activationStrategy.replace;
   }
 
   canActivate(params: any) {
+    logger.debug('canActivate', params);
     this.src = params.url;
-    this.type = this.getVideoType(params.url);
+    this.type = params.mime;
+    this.isVideo = params.mime.startsWith('video/');
   }
 
-  bind() {
-    this.video = videojs(this.videoElement, {
+  attached() {
+    logger.debug('initializing videojs');
+    let element = this.isVideo ? this.videoElement : this.audioElement;
+    this.video = videojs(element, {
       controls: false,
       autoplay: false,
       preload: 'auto',

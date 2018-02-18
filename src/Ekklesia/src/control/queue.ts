@@ -2,6 +2,7 @@ import { YouTubeService } from 'common/youtube-service';
 import { autoinject, LogManager } from 'aurelia-framework';
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { moveBefore } from 'aurelia-dragula';
+import './queue.scss';
 
 const logger = LogManager.getLogger('queue');
 

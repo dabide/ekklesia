@@ -1,8 +1,10 @@
 import { UrlHelper } from 'common/url-helper';
 import { EventAggregator, Subscription } from 'aurelia-event-aggregator';
 import { autoinject, LogManager, observable, TaskQueue } from 'aurelia-framework';
+import * as webcast from 'webcaster/js/client';
 import { SignalRService } from 'common/signalr-service';
 import { SongService } from 'common/song-service';
+import './control.scss';
 
 const logger = LogManager.getLogger('control');
 
@@ -14,7 +16,9 @@ export class Control {
   singbackUrl: string;
   subscriptions: Subscription[];
   currentItem: any;
+  fileInput: HTMLInputElement;
   @observable item: any;
+  @observable files: File[];
 
   constructor(
     private signalRService: SignalRService,
@@ -61,6 +65,14 @@ export class Control {
     ];
   }
 
+  canActivate() {
+    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+      .then(() => navigator.mediaDevices.enumerateDevices())
+      .then(devices => {
+        logger.debug('devices', devices.filter(d => d.kind === 'audioinput'));
+      });
+  }
+
   deactivate() {
     for (const subscription of this.subscriptions) {
       subscription.dispose();
@@ -76,7 +88,7 @@ export class Control {
   }
 
   browse(item: any) {
-    this.signalRService.hubConnection.invoke('browse', { url: this.currentItem.url });
+    this.signalRService.hubConnection.invoke('browse', { id: this.currentItem.url, url: this.currentItem.url, mime: this.currentItem.type });
   }
 
   play() {
@@ -139,5 +151,36 @@ export class Control {
         event.stopPropagation();
         break;
     }
+  }
+
+  browseFiles() {
+    this.fileInput.click();
+  }
+
+  filesChanged(newValue: File[]) {
+    for (const file of newValue) {
+      let url =  URL.createObjectURL(file);
+      this.enqueue({
+        id: url,
+        url: url,
+        type: file.type,
+        title: file.name,
+        icon: this.getIcon(file.type)
+      });
+    }
+
+    this.files = [];
+  }
+
+  getIcon(type: string) {
+    logger.debug('getIcon', type);
+    let unknown: string = 'fas fa-file';
+    if (type == null) return unknown;
+
+    if (type.startsWith('image/')) return 'fas fa-file-image';
+    if (type.startsWith('audio/')) return 'fas fa-file-audio';
+    if (type.startsWith('video/')) return 'fas fa-file-video';
+
+    return unknown;
   }
 }

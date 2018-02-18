@@ -1,5 +1,8 @@
 <template>
-  <video ref="videoElement">
+  <video if.bind="isVideo" ref="videoElement" class="video-js">
     <source src.bind="src" type.bind="type">
   </video>
+  <audio if.bind="!isVideo" ref="audioElement" class="video-js">
+    <source src.bind="src" type.bind="type">
+  </audio>
 </template>

@@ -24,8 +24,13 @@ export class View {
 
     this._subscriptions.push(eventAggregator.subscribe('url:browse', message => {
       logger.debug('Browsing to URL', message);
-      // this.router.parent.navigate(`view/browse?url=${encodeURIComponent(message.url)}`);
-      this.router.parent.navigate(`view/video?url=${encodeURIComponent(message.url)}`);
+      if (message.mime.startsWith('audio/') || message.mime.startsWith('video/')) {
+        this.router.parent.navigate(`view/video?url=${encodeURIComponent(message.url)}&mime=${encodeURIComponent(message.mime)}`);
+      } else if (message.mime.startsWith('image/')) {
+        this.router.parent.navigate(`view/image?url=${encodeURIComponent(message.url)}&mime=${encodeURIComponent(message.mime)}`);
+      } else {
+        this.router.parent.navigate(`view/browse?url=${encodeURIComponent(message.url)}`);
+      }
     }));
   }
 
@@ -36,6 +41,7 @@ export class View {
       { route: ['', 'song', 'song/:song'], name: 'song-view', moduleId: PLATFORM.moduleName('./song-view'), nav: true, title: 'Part' },
       { route: ['browse'], name: 'web-view', moduleId: PLATFORM.moduleName('./browser'), nav: true, title: 'Browser' },
       { route: ['video'], name: 'video-player', moduleId: PLATFORM.moduleName('./video-player'), nav: true, title: 'Video Player' }
+      { route: ['image'], name: 'image-viewer', moduleId: PLATFORM.moduleName('./image-viewer'), nav: true, title: 'Image Player' }
     ]);
 
     this.router = router;

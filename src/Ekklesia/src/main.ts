@@ -12,6 +12,10 @@ import 'whatwg-fetch';
 //--------------
 import fontawesome from '@fortawesome/fontawesome';
 
+import * as faFile from '@fortawesome/fontawesome-free-solid/faFile';
+import * as faFileAudio from '@fortawesome/fontawesome-free-solid/faFileAudio';
+import * as faFileImage from '@fortawesome/fontawesome-free-solid/faFileImage';
+import * as faFileVideo from '@fortawesome/fontawesome-free-solid/faFileVideo';
 import * as faGlobe from '@fortawesome/fontawesome-free-solid/faGlobe';
 import * as faMusic from '@fortawesome/fontawesome-free-solid/faMusic';
 import * as faPlay from '@fortawesome/fontawesome-free-solid/faPlay';
@@ -21,6 +25,10 @@ import * as faTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import * as faFacebook from '@fortawesome/fontawesome-free-brands/faFacebook';
 import * as faYoutube from '@fortawesome/fontawesome-free-brands/faYoutube';
 
+fontawesome.library.add(faFile);
+fontawesome.library.add(faFileAudio);
+fontawesome.library.add(faFileImage);
+fontawesome.library.add(faFileVideo);
 fontawesome.library.add(faGlobe);
 fontawesome.library.add(faMusic);
 fontawesome.library.add(faPlay);
