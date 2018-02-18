@@ -13,8 +13,12 @@ export class Queue {
   subscriptions;
 
   constructor(private eventAggregator: EventAggregator, private youTubeService: YouTubeService) {
+    this.loadQueue();
     this.subscriptions = [
-      eventAggregator.subscribe('item:enqueue', item => { this.items.push(item); })
+      eventAggregator.subscribe('item:enqueue', item => {
+        this.items.push(item);
+        this.saveQueue();
+      })
     ];
   }
 
@@ -29,6 +33,8 @@ export class Queue {
     let siblingId = sibling ? sibling.dataset.id : null;
     moveBefore(this.items, i => i.id == itemId, s => s.id == siblingId);
     logger.debug('items', this.items);
+
+    this.saveQueue();
   }
 
   navigate(event: KeyboardEvent, index: number) {
@@ -52,14 +58,28 @@ export class Queue {
 
   remove(item: any) {
     this.items = this.items.filter(i => i.id !== item.id);
+    this.saveQueue();
+
     if (this.currentItem === item) {
       this.select(null);
     }
   }
 
   deactivate() {
+    this.saveQueue();
     for (const subscription of this.subscriptions) {
       subscription.dispose();
+    }
+  }
+
+  saveQueue() {
+    localStorage.setItem('queue', JSON.stringify(this.items));
+  }
+
+  loadQueue() {
+    let storedQueue = localStorage.getItem('queue');
+    if (storedQueue != null) {
+      this.items = JSON.parse(storedQueue);
     }
   }
 }

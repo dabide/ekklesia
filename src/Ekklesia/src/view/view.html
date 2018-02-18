@@ -1,6 +1,10 @@
 <template>
-  <div if.bind="notFullscreen" style="position: absolute; top: 5px; right: 5px;">
-    <button class="btn btn-default" click.trigger="fullScreen()">Full screen</button>
+  <div id="viewer" class="${blackened ? 'cleared' : ''}">
+    <div if.bind="notFullscreen" style="position: absolute; top: 5px; right: 5px; z-index: 999999">
+      <button class="btn btn-default" click.trigger="fullScreen()">Full screen</button>
+    </div>
+    <div class="${cleared ? 'cleared' : ''}">
+      <router-view></router-view>
+    </div>
   </div>
-  <router-view></router-view>
 </template>

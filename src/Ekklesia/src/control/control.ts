@@ -10,6 +10,8 @@ const logger = LogManager.getLogger('control');
 
 @autoinject()
 export class Control {
+  @observable cleared: boolean;
+  @observable blackened: boolean;
   playing: boolean;
   progress: string;
   autocompleteHasFocus: boolean;
@@ -73,6 +75,13 @@ export class Control {
       });
   }
 
+  activate() {
+    this.taskQueue.queueTask(() => {
+      this.cleared = false;
+      this.blackened = false;
+    });
+  }
+
   deactivate() {
     for (const subscription of this.subscriptions) {
       subscription.dispose();
@@ -84,26 +93,44 @@ export class Control {
       this.currentItem.lyrics[identifier].active = false;
     }
     songPart.active = true;
-    this.signalRService.hubConnection.invoke('changeSongPart', { id: this.currentItem.id, partIdentifier: songPart.identifier });
+    this.signalRService.send('changeSongPart', { id: this.currentItem.id, partIdentifier: songPart.identifier });
   }
 
   browse(item: any) {
-    this.signalRService.hubConnection.invoke('browse', { id: this.currentItem.url, url: this.currentItem.url, mime: this.currentItem.type });
+    this.signalRService.send('browse', { id: this.currentItem.url, url: this.currentItem.url, mime: this.currentItem.type });
   }
 
   play() {
     logger.debug('press play on tape');
-    this.signalRService.hubConnection.invoke('controlVideo', { action: 'play' });
+    this.signalRService.send('controlVideo', { action: 'play' });
   }
 
   pause() {
     logger.debug('press pause on tape');
-    this.signalRService.hubConnection.invoke('controlVideo', { action: 'pause' });
+    this.signalRService.send('controlVideo', { action: 'pause' });
   }
 
   stop() {
     logger.debug('press stop on tape');
-    this.signalRService.hubConnection.invoke('controlVideo', { action: 'stop' });
+    this.signalRService.send('controlVideo', { action: 'stop' });
+  }
+
+  toggleCleared() {
+    this.cleared = !this.cleared;
+  }
+
+  toggleBlackened() {
+    this.blackened = !this.blackened;
+  }
+
+  clearedChanged(newValue: any) {
+    logger.debug('clearedChanged', newValue);
+    this.signalRService.send('blank', { mode: 'clear', on: newValue });
+  }
+
+  blackenedChanged(newValue: any) {
+    logger.debug('blackenedChanged', newValue);
+    this.signalRService.send('blank', { mode: 'black', on: newValue });
   }
 
   itemChanged(newValue: any) {
@@ -134,7 +161,23 @@ export class Control {
     return this.songService.getSongs(filter, limit);
   }
 
+  hotkey(event: KeyboardEvent) {
+    //logger.debug('key', event);
+    switch (event.code) {
+      case 'KeyB':
+        this.toggleBlackened();
+        event.stopPropagation();
+        break;
+
+      case 'KeyC':
+        this.toggleCleared();
+        event.stopPropagation();
+        break;
+    }
+  }
+
   navigate(event: KeyboardEvent, index: number) {
+    //logger.debug('key', event);
     switch (event.code) {
       case "ArrowUp":
         if (index > 0) {
@@ -159,7 +202,7 @@ export class Control {
 
   filesChanged(newValue: File[]) {
     for (const file of newValue) {
-      let url =  URL.createObjectURL(file);
+      let url = URL.createObjectURL(file);
       this.enqueue({
         id: url,
         url: url,

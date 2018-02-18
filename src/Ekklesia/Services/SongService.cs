@@ -75,6 +75,8 @@ namespace Ekklesia.Services
 
         private string GetSingbackPath(string hymnNumber)
         {
+            ScanSingbackIfNecessary();
+
             if (hymnNumber == null)
             {
                 return null;

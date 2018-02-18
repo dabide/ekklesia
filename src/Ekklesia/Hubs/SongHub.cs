@@ -5,6 +5,11 @@ namespace Ekklesia.Hubs
 {
     internal class SongHub : Hub
     {
+        public async Task Blank(BlankMessage message)
+        {
+            await Clients.All.InvokeAsync("Send", message);
+        }
+
         public async Task ChangeSongPart(ChangeSongPartMessage message)
         {
             await Clients.All.InvokeAsync("Send", message);
@@ -19,6 +24,16 @@ namespace Ekklesia.Hubs
         {
             await Clients.All.InvokeAsync("Send", message);
         }
+    }
+
+    internal class BlankMessage : MessageBase
+    {
+        protected BlankMessage() : base("blank")
+        {      
+        }
+
+        public string Mode { get; set; }
+        public bool On { get; set; }
     }
 
     internal class ChangeSongPartMessage : MessageBase

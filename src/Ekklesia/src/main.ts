@@ -1,3 +1,4 @@
+import 'jquery';
 // <reference types="aurelia-loader-webpack/src/webpack-hot-interface"/>
 // we want font-awesome to load as soon as possible to show the fa-spinner
 import {Aurelia} from 'aurelia-framework';

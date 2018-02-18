@@ -6,6 +6,7 @@ const logger = LogManager.getLogger('signal-r-service');
 
 @inject(EventAggregator)
 export class SignalRService {
+  connected: boolean;
   private eventAggregator: EventAggregator;
   hubConnection: HubConnection;
 
@@ -20,10 +21,21 @@ export class SignalRService {
     this.hubConnection.start()
       .then(() => {
         logger.debug('Hub connection started');
+        this.connected = true;
       })
       .catch(err => {
-        logger.debug('Error while establishing connection')
+        logger.debug('Error while establishing connection');
+        this.connected = false;
       });
+  }
+
+  send(methodName: string, message: any) : Promise<any> {
+    if (this.connected) {
+      return this.hubConnection.invoke(methodName, message);
+    } else {
+      logger.warn('Couldn\'t send message, not connected.');
+      // return Promise.reject('Not connected');
+    }
   }
 
   private registerOnServerEvents(): void {

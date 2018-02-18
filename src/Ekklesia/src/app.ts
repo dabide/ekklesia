@@ -1,7 +1,7 @@
 import { inject, LogManager } from 'aurelia-framework';
 import { Router, RouterConfiguration } from 'aurelia-router';
 import { PLATFORM } from 'aurelia-pal';
-import {HttpClient} from 'aurelia-fetch-client';
+import { HttpClient } from 'aurelia-fetch-client';
 import { SignalRService } from 'common/signalr-service';
 import screenfull from 'screenfull';
 import './app.scss';
@@ -14,7 +14,7 @@ export class App {
   router: Router;
   message = 'Hello World!';
   currentSong: any;
- 
+
   constructor(signalRService: SignalRService, httpClient: HttpClient) {
     this.signalRService = signalRService;
     signalRService.startConnection();
@@ -29,7 +29,7 @@ export class App {
             'X-Requested-With': 'Fetch'
           }
         })
-      });
+    });
   }
 
   configureRouter(config: RouterConfiguration, router: Router) {
@@ -37,7 +37,7 @@ export class App {
     config.map([
       { route: '', name: 'home', moduleId: PLATFORM.moduleName('home/home'), nav: true, title: 'Home' },
       { route: 'control', name: 'control', moduleId: PLATFORM.moduleName('control/control'), nav: true, title: 'Control' },
-      { route: 'view', name: 'view', moduleId: PLATFORM.moduleName('view/view'), nav: true, title: 'View' }
+      { route: 'view', name: 'view', moduleId: PLATFORM.moduleName('view/view'), nav: true, title: 'View', settings: { target: '_blank' } }
     ]);
 
     this.router = router;

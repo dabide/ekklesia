@@ -1,55 +1,68 @@
 <template>
   <require from="./queue"></require>
-  <form>
-    <autocomplete class="ml-2 mr-2 mt-3 mb-3" data.call="getItems(filter, limit)" value.two-way="item" placeholder="Select a song or an URL" focus.bind="autocompleteHasFocus">
-      <div slot="append">
-        <button class="btn btn-outline-secondary" type="button" click.delegate="browseFiles()" data-toggle="tooltip" data-placement="top"
-          title="Add file(s)">
-          <i class="fas fa-file"></i>
-        </button>
-      </div>
-    </autocomplete>
-    <div>
-        <input ref="fileInput" type="file" class="form-control-file" id="file-input" files.two-way="files" accept="image/*, video/*, audio/* "
-        multiple>
-    </div>
-  </form>
-  <div class="row">
-    <div class="col-4">
-      <queue></queue>
-    </div>
-    <div class="col-8">
-      <div if.bind="!currentItem.url">
-        <h1>${currentItem.title}</h1>
-        <media-element if.bind="currentItem.singbackAvailable" url.bind="singbackUrl"></media-element>
-        <div class="list-group">
-          <a repeat.for="identifier of currentItem.presentation" href="javascript:void(0)" keydown.delegate="navigate($event, $index)"
-            click.delegate="display(currentItem.lyrics[identifier])" class="list-group-item list-group-item-action flex-column align-items-start ${currentItem.lyrics[identifier].active ? 'active' : ''}">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">${identifier}</h5>
+  <div keydown.delegate="hotkey($event)">
+    <form>
+      <div class="row">
+        <div class="col">
+          <autocomplete class="ml-2 mr-2 mt-3 mb-3" data.call="getItems(filter, limit)" value.two-way="item" placeholder="Select a song or an URL"
+            focus.bind="autocompleteHasFocus">
+            <div slot="append">
+              <button class="btn btn-outline-secondary" type="button" click.delegate="browseFiles()" data-toggle="tooltip" data-placement="top"
+                title="Add file(s)">
+                <i class="fas fa-file"></i>
+              </button>
             </div>
-            <p class="mb-1">
-              <span repeat.for="line of currentItem.lyrics[identifier].lines">${line}
-                <br if.bind="!$last">
-              </span>
-            </p>
-          </a>
+          </autocomplete>
+          <div>
+            <input ref="fileInput" type="file" class="form-control-file" id="file-input" files.two-way="files" accept="image/*, video/*, audio/* "
+              multiple>
+          </div>
+        </div>
+        <div class="col col-auto">
+          <toggle-button-group>
+            <checkbox-button checked.bind="cleared">Clear</checkbox-button>
+            <checkbox-button checked.bind="blackened">Black</checkbox-button>
+          </toggle-button-group>
         </div>
       </div>
-      <div if.bind="currentItem.url">
-        <h1>${currentItem.title}</h1>
-        <playback-controls disabled.bind="!currentItem.loaded" play.call="play()" pause.call="pause()" stop.call="stop()" progress.bind="progress"
-          playing.bind="playing"></playback-controls>
-        <div class="list-group">
-          <a href="javascript:void(0)" click.delegate="browse(item.url)" class="list-group-item list-group-item-action flex-column align-items-start ${currentItem.loaded ? 'active' : ''}">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">
-                <i class.bind="currentItem.icon"></i> ${currentItem.title}</h5>
+    </form>
+    <div class="row">
+      <div class="col-4">
+        <queue></queue>
+      </div>
+      <div class="col-8">
+        <div if.bind="!currentItem.url">
+          <h1>${currentItem.title}</h1>
+          <media-element if.bind="currentItem.singbackAvailable" url.bind="singbackUrl"></media-element>
+          <div class="list-group">
+            <a repeat.for="identifier of currentItem.presentation" href="javascript:void(0)" keydown.delegate="navigate($event, $index)"
+              click.delegate="display(currentItem.lyrics[identifier])" class="list-group-item list-group-item-action flex-column align-items-start ${currentItem.lyrics[identifier].active ? 'active' : ''}">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">${identifier}</h5>
+              </div>
               <p class="mb-1">
-                ${currentItem.author}
+                <span repeat.for="line of currentItem.lyrics[identifier].lines">${line}
+                  <br if.bind="!$last">
+                </span>
               </p>
-            </div>
-          </a>
+            </a>
+          </div>
+        </div>
+        <div if.bind="currentItem.url">
+          <h1>${currentItem.title}</h1>
+          <playback-controls disabled.bind="!currentItem.loaded" play.call="play()" pause.call="pause()" stop.call="stop()" progress.bind="progress"
+            playing.bind="playing"></playback-controls>
+          <div class="list-group">
+            <a href="javascript:void(0)" click.delegate="browse(item.url)" class="list-group-item list-group-item-action flex-column align-items-start ${currentItem.loaded ? 'active' : ''}">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">
+                  <i class.bind="currentItem.icon"></i> ${currentItem.title}</h5>
+                <p class="mb-1">
+                  ${currentItem.author}
+                </p>
+              </div>
+            </a>
+          </div>
         </div>
       </div>
     </div>

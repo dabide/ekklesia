@@ -9,5 +9,6 @@ export class Home {
   
   constructor(router: Router) {
     this.router = router;
+    logger.debug('router', this.router);
   }
 }
