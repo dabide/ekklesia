@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: "unless-stopped"
+    ports:
+      - "127.0.0.1:55672:15672"
+    networks:
+      - default
+      - ekklesia-dev
+
+networks:
+  ekklesia-dev:
+    external: true

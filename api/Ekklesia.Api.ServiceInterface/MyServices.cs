@@ -9,12 +9,10 @@ namespace Ekklesia.Api.ServiceInterface
 {
     public class MyServices : Service
     {
-        private readonly IFoo _foo;
         private readonly ILogger<MyServices> _logger;
 
-        public MyServices(IFoo foo, ILogger<MyServices> logger)
+        public MyServices(ILogger<MyServices> logger)
         {
-            _foo = foo;
             _logger = logger;
         }
         

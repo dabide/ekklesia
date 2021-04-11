@@ -14,10 +14,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Ekklesia.Api.Common\Ekklesia.Api.Common.csproj" />
       <ProjectReference Include="..\Ekklesia.Api.ServiceModel\Ekklesia.Api.ServiceModel.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Autofac" Version="6.1.0" />
       <PackageReference Include="FluentMigrator" Version="3.2.15" />
       <PackageReference Include="FluentMigrator.Abstractions" Version="3.2.15" />
       <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />

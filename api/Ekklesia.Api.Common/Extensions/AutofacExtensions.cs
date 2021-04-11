@@ -30,7 +30,7 @@ using Autofac;
 using Autofac.Builder;
 using Autofac.Features.Scanning;
 
-namespace Ekklesia.Api.Extensions
+namespace Ekklesia.Api.Common.Extensions
 {
     public static class AutofacExtensions
     {

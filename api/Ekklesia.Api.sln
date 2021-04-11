@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ekklesia.Api.ServiceInterfa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ekklesia.Api.ServiceModel", "Ekklesia.Api.ServiceModel\Ekklesia.Api.ServiceModel.csproj", "{F75F80AE-9D2A-448B-A9EB-F9ECBA4A414E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ekklesia.Api.Common", "Ekklesia.Api.Common\Ekklesia.Api.Common.csproj", "{6C887DB7-17B7-4F0A-AE94-4B604AF69012}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{F75F80AE-9D2A-448B-A9EB-F9ECBA4A414E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F75F80AE-9D2A-448B-A9EB-F9ECBA4A414E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F75F80AE-9D2A-448B-A9EB-F9ECBA4A414E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C887DB7-17B7-4F0A-AE94-4B604AF69012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C887DB7-17B7-4F0A-AE94-4B604AF69012}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C887DB7-17B7-4F0A-AE94-4B604AF69012}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C887DB7-17B7-4F0A-AE94-4B604AF69012}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

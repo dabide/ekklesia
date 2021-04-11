@@ -2,17 +2,19 @@
 using System.IO.Abstractions;
 using Autofac;
 using Ekklesia.Api.Data;
-using Ekklesia.Api.Extensions;
+using Ekklesia.Api.Common.Extensions;
 using Microsoft.Extensions.Configuration;
 using NodaTime;
 using ServiceStack;
 using ServiceStack.Caching;
 using ServiceStack.Data;
+using ServiceStack.Messaging;
 using ServiceStack.OrmLite;
 using ServiceStack.OrmLite.MySql;
 using ServiceStack.OrmLite.PostgreSQL;
 using ServiceStack.OrmLite.Sqlite;
 using ServiceStack.OrmLite.SqlServer;
+using ServiceStack.RabbitMq;
 
 namespace Ekklesia.Api
 {
@@ -39,12 +41,13 @@ namespace Ekklesia.Api
             
             builder.RegisterType<MemoryCacheClient>().As<ICacheClient>().SingleInstance();
 
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
             builder.Register(_ =>
                 {
                     string dbType = _configuration.GetValue("DbType", "Sqlite");
-                    OrmLiteConnectionFactory connectionFactory = new OrmLiteConnectionFactory(
-                        _configuration.GetConnectionString("DefaultConnection"),
+                    OrmLiteConnectionFactory connectionFactory = new(
+                        connectionString,
                         dbType switch
                         {
                             "SQLServer" => SqlServer2019OrmLiteDialectProvider.Instance,
@@ -69,6 +72,11 @@ namespace Ekklesia.Api
 
             
             builder.Register(_ => new ServerEventsFeature())
+                .AsSelf()
+                .SingleInstance();
+
+            builder.Register(_ => new RabbitMqServer(_configuration.GetValue("RABBITMQ_SERVER", "localhost")))
+                .As<IMessageService>()
                 .AsSelf()
                 .SingleInstance();
 

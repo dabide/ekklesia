@@ -35,6 +35,9 @@
     <Reference Include="ServiceStack.OrmLite.SqlServer, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\lib\ServiceStack\ServiceStack.OrmLite.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="ServiceStack.RabbitMq, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\lib\ServiceStack\ServiceStack.RabbitMq.dll</HintPath>
+    </Reference>
     <Reference Include="ServiceStack.Text, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\lib\ServiceStack\ServiceStack.Text.dll</HintPath>
     </Reference>
@@ -63,6 +66,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ekklesia.Api.Common\Ekklesia.Api.Common.csproj" />
     <ProjectReference Include="..\Ekklesia.Api.ServiceInterface\Ekklesia.Api.ServiceInterface.csproj" />
     <ProjectReference Include="..\Ekklesia.Api.ServiceModel\Ekklesia.Api.ServiceModel.csproj" />
   </ItemGroup>

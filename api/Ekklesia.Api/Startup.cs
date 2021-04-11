@@ -1,5 +1,6 @@
 using System;
 using Autofac;
+using Ekklesia.Api.ServiceInterface;
 using FluentMigrator.Runner;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
@@ -26,7 +27,7 @@ namespace Ekklesia.Api
             services.AddFluentMigratorCore()
                 .ConfigureRunner(rb => ConfigureMigrationRunner(rb)
                     .WithGlobalConnectionString(Configuration.GetConnectionString("DefaultConnection"))
-                    .ScanIn(GetType().Assembly).For.Migrations()
+                    .ScanIn(typeof(ServiceInterfaceModule).Assembly).For.Migrations()
                 );
         }
 

@@ -1,9 +1,11 @@
 ﻿using Ekklesia.Api.Data.Models;
 using Ekklesia.Api.ServiceInterface;
+using Ekklesia.Api.ServiceModel;
 using FluentMigrator.Runner;
 using Funq;
 using NodaTime;
 using ServiceStack;
+using ServiceStack.Messaging;
 using ServiceStack.OrmLite;
 using ServiceStack.Validation;
 
@@ -29,6 +31,11 @@ namespace Ekklesia.Api
 
             IMigrationRunner migrator = container.Resolve<IMigrationRunner>();
             migrator.MigrateUp();
+            
+            IMessageService mqServer = container.Resolve<IMessageService>();
+
+            mqServer.RegisterHandler<Hello>(ExecuteMessage);
+            mqServer.Start();
 
             OrmLiteConfig.InsertFilter = (_, row) =>
             {

@@ -33,6 +33,7 @@ WORKDIR /src
 COPY --from=ss-lib /lib/ServiceStack ./lib/ServiceStack
 #COPY ["nuget.config", "."]
 COPY ["Ekklesia.Api/Ekklesia.Api.csproj", "Ekklesia.Api/"]
+COPY ["Ekklesia.Api.Common/Ekklesia.Api.Common.csproj", "Ekklesia.Api.Common/"]
 COPY ["Ekklesia.Api.ServiceInterface/Ekklesia.Api.ServiceInterface.csproj", "Ekklesia.Api.ServiceInterface/"]
 COPY ["Ekklesia.Api.ServiceModel/Ekklesia.Api.ServiceModel.csproj", "Ekklesia.Api.ServiceModel/"]
 RUN dotnet restore "Ekklesia.Api/Ekklesia.Api.csproj"
