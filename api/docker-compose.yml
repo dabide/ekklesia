@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  ekklesia.api:
+    image: ${DOCKER_REGISTRY-}ekklesiaapi
+    build:
+      context: .
+      dockerfile: Ekklesia.Api/Dockerfile

@@ -1,0 +1,54 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ekklesia.Api", "Ekklesia.Api\Ekklesia.Api.csproj", "{5F817400-1A3A-48DF-98A6-E7E5A3DC762F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ekklesia.Api.Tests", "Ekklesia.Api.Tests\Ekklesia.Api.Tests.csproj", "{455EC1EF-134F-4CD4-9C78-E813E4E6D8F6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServiceStack", "ServiceStack", "{0DC825C7-4800-4CA9-B942-CC63DF1719AF}"
+ProjectSection(SolutionItems) = preProject
+	..\scripts\BuildServiceStackLibraries.ps1 = ..\scripts\BuildServiceStackLibraries.ps1
+	..\scripts\UpdateServiceStackVersion.ps1 = ..\scripts\UpdateServiceStackVersion.ps1
+EndProjectSection
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{8783BF68-F58E-40F4-A287-23702C4C5D21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ekklesia.Api.ServiceInterface", "Ekklesia.Api.ServiceInterface\Ekklesia.Api.ServiceInterface.csproj", "{AC176886-0F8C-4076-9A13-52FC75D13089}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ekklesia.Api.ServiceModel", "Ekklesia.Api.ServiceModel\Ekklesia.Api.ServiceModel.csproj", "{F75F80AE-9D2A-448B-A9EB-F9ECBA4A414E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F817400-1A3A-48DF-98A6-E7E5A3DC762F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F817400-1A3A-48DF-98A6-E7E5A3DC762F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F817400-1A3A-48DF-98A6-E7E5A3DC762F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F817400-1A3A-48DF-98A6-E7E5A3DC762F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{455EC1EF-134F-4CD4-9C78-E813E4E6D8F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{455EC1EF-134F-4CD4-9C78-E813E4E6D8F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{455EC1EF-134F-4CD4-9C78-E813E4E6D8F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{455EC1EF-134F-4CD4-9C78-E813E4E6D8F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8783BF68-F58E-40F4-A287-23702C4C5D21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8783BF68-F58E-40F4-A287-23702C4C5D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8783BF68-F58E-40F4-A287-23702C4C5D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8783BF68-F58E-40F4-A287-23702C4C5D21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC176886-0F8C-4076-9A13-52FC75D13089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC176886-0F8C-4076-9A13-52FC75D13089}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC176886-0F8C-4076-9A13-52FC75D13089}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC176886-0F8C-4076-9A13-52FC75D13089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F75F80AE-9D2A-448B-A9EB-F9ECBA4A414E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F75F80AE-9D2A-448B-A9EB-F9ECBA4A414E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F75F80AE-9D2A-448B-A9EB-F9ECBA4A414E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F75F80AE-9D2A-448B-A9EB-F9ECBA4A414E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {02854F2A-8EF4-468E-80A3-CD64BBAF5D15}
+	EndGlobalSection
+EndGlobal
