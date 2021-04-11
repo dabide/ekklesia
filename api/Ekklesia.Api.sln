@@ -8,8 +8,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ekklesia.Api.Tests", "Ekkle
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServiceStack", "ServiceStack", "{0DC825C7-4800-4CA9-B942-CC63DF1719AF}"
 ProjectSection(SolutionItems) = preProject
-	..\scripts\BuildServiceStackLibraries.ps1 = ..\scripts\BuildServiceStackLibraries.ps1
-	..\scripts\UpdateServiceStackVersion.ps1 = ..\scripts\UpdateServiceStackVersion.ps1
+	..\scripts\UpdateServiceStack.ps1 = ..\scripts\UpdateServiceStack.ps1
 EndProjectSection
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{8783BF68-F58E-40F4-A287-23702C4C5D21}"
